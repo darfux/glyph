@@ -1,4 +1,10 @@
 root = exports ? this
+@klass_pool = {}
+
+root.injectClass = (name, klass)->
+	@klass_pool[name] = klass
+	root["getClass#{name}"] = ->
+		klass
 
 ready = ->
 	cont = $('body').attr('cont')

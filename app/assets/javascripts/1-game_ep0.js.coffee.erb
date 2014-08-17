@@ -1,0 +1,13 @@
+root = exports ? this
+
+SoftKeyboard = root.getClassSoftKeyboard()
+
+preload = ->
+    @game.load.image('cirno', '<%= asset_path("test.jpg") %>');
+
+create = ->
+    # @game.add.sprite(0, 0, 'cirno');
+    skb = new SoftKeyboard(@game)
+
+root.init_ep0 = ->
+	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });

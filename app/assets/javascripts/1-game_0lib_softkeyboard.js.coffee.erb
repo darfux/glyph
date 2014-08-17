@@ -1,0 +1,156 @@
+root = exports ? this
+	
+class Key extends Phaser.Group
+	Colors = { 
+		# NORMAL: 0xFFFFFF
+		# OVER:	0xDDDDDD
+		# DOWN:	0xEEEEEE		
+		NORMAL: '#FFFFFF'
+		OVER:	'#DDDDDD'
+		DOWN:	'#EEEEEE'
+	}
+	States = {
+		NORMAL: 0x0
+		OVER:	0x1
+		DOWN:	0x2
+	}
+
+	constructor: (game, letter)->
+		super(game, null, "SoftKeyboard-Key")
+		style = { font: "32px Arial", fill: "#aabbcc" }
+		text = new Phaser.Text(game, 14, 5, letter, style)
+		@keysize = 50
+		@keycode = letter
+		@state = States.NORMAL
+		@bg = new Phaser.Graphics(game, 0, 0)
+		# bg.beginFill(0xEEEEEE);
+		# @bgFill(Colors.NORMAL)
+		
+		# bmd = new Phaser.BitmapData(game, null, @keysize, @keysize)
+		@bmd = game.add.bitmapData(@keysize, @keysize);
+		@bmd.ctx.beginPath()
+		@bmd.ctx.rect(0, 0, @keysize, @keysize)
+		@bmd.ctx.fillStyle = '#FFFFFF';
+		@bmd.ctx.fill()
+
+		sprite = new Phaser.Sprite(game, 0, 0, @bmd)
+		# @add(bg)
+		@add(sprite)
+		# @add(@bg)
+		@add(text)
+
+		# surface = new Phaser.Graphics(game, 0, 0)
+		# surface.beginFill(0xFFFFFF, 0)
+		# surface.lineStyle(2, 0xFFFFFF, 0)
+		# surface.drawRect(0, 0, @keysize, @keysize)
+		sprite.inputEnabled = true;
+		sprite.events.onInputOver.add(@inputOver, this)
+		sprite.events.onInputOut.add(@inputOut, this)
+		sprite.events.onInputDown.add(@downHandler, this)
+		sprite.events.onInputUp.add(@upHandler, this)
+
+	inputOver: ->
+		@bgFill(Colors.OVER)
+		@state = States.OVER
+		if @keyover_callback
+			@keyover_callback(@keycode)
+
+	inputOut: ->
+		@bgFill(Colors.NORMAL)
+		@state = States.NORMAL
+
+	downHandler: ->
+		if @state == States.OVER
+			@bgFill(Colors.DOWN)
+			console.log(@keycode)
+
+	upHandler: ->
+		if @state == States.OVER
+			@bgFill(Colors.OVER)
+
+	bgFill: (color)->
+		@bmd.ctx.fillStyle = color
+		@bmd.ctx.fill()
+		# @bg.beginFill(color);
+		# # @bg.lineStyle(2, 0x999999, 1)
+		# @bg.drawRect(0, 0, @keysize, @keysize)	
+
+	keyOver: (callback)->
+		@keyover_callback = callback
+
+class SoftKeyboard
+	# @MASK: null
+	# @modals: {}
+	# @init: ->
+	# 	@maskInit()
+	# 	$('button[data-toggle="modal"]').each ->
+	# 		mm = new ModalModule($(this))
+	# 		ModalModule.modals[mm.id] = mm
+
+	# @maskInit: ->
+	# 	@mask = $('<div></div>')
+	# 	@mask.addClass('modal-mask')
+	# 	@mask.attr('')
+	# 	$('body').append(@mask)
+	# 	@mask.hide()
+	# 	ModalModule.MASK = @mask
+
+	constructor: (game)->
+		kbs = new Phaser.Group(game, undefined, "SoftKeyboard")
+		@keys = {}
+		for i in [0..68]
+			letter = String.fromCharCode(48+i)
+			key = new Key(game, letter)
+			kbs.add(key)
+			key.x = (i%12)*(key.keysize+0)
+			key.y = Math.floor(i/12)*(key.keysize+0)
+			@keys[letter] = key
+			keys = @keys
+			# key.keyOver()
+			key.keyOver (keycode)->
+				for k,v of keys
+					if k != keycode
+						v.inputOut()
+
+		kbs.x = game.world.width/2 - kbs.width/2
+		# text = game.add.text(0, 0, "keyboard", style, kbs)
+		# kbs.setAll('x', 100)
+		# text.x = 1000
+		# console.log kbs
+		# @button = button
+		# @id = button.attr 'data-target'
+		# @dialog = $("##{@id}")
+		# @close = @dialog.children("[data-dismiss='modal']")
+		# @mask = ModalModule.MASK
+		# @initButton()
+		# @initDialog()
+		# @setActivate(->)
+		# @setDeactivate(->)
+
+	# initButton: ->
+	# 	@button.click =>
+	# 		@activate()
+	# 		false
+	# 	@close.click =>
+	# 		@deactivate()
+
+	# initDialog: ->
+	# 	@dialog.hide()
+
+	# activate: ->
+	# 	@dialog.show()
+	# 	@mask.show()
+	# 	@activateCallBack()
+
+	# deactivate: ->
+	# 	@dialog.hide()
+	# 	@mask.hide()
+	# 	@deactivateCallBack()
+
+	# setActivate: (callback) ->
+	# 	@activateCallBack = callback
+
+	# setDeactivate: (callback) ->
+	# 	@deactivateCallBack = callback 
+
+root.injectClass('SoftKeyboard', SoftKeyboard)
