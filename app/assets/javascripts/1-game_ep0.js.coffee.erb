@@ -3,11 +3,17 @@ root = exports ? this
 SoftKeyboard = root.getClassSoftKeyboard()
 
 preload = ->
-    @game.load.image('cirno', '<%= asset_path("test.jpg") %>');
+    @game.load.image('cirno', '<%= asset_path("test.jpg") %>')
+    @game.load.image('bg', '<%= asset_path("fate.jpg") %>')
 
 create = ->
-    # @game.add.sprite(0, 0, 'cirno');
+    @game.add.sprite(0, 0, 'bg')
+    img = @game.add.sprite(0, 0, 'cirno')
+    img.x = @game.world.width/2 - img.width/2
+    img.y = 48
     skb = new SoftKeyboard(@game)
+    # skb.hide()
+
 
 root.init_ep0 = ->
-	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create });
+	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'glyph-0', { preload: preload, create: create });
