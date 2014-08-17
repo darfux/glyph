@@ -1,0 +1,16 @@
+// Place all the styles related to the user::session controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+#player-login{
+  width: 340px;
+  border: solid 1px gray;
+  padding: 32px;
+  border-radius: 8px;
+  margin: 240px auto auto;
+  font-size: 28px;
+  input{
+    font-size: 24px;
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+}

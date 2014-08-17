@@ -1,3 +1,14 @@
 <%#image_tag 'test.jpg' %>
-<div id="phaser-example">
+<!-- <div id="phaser-example">
+</div> -->
+<div id='episode-list'>
+  <% @episodes.each_with_index do |ep, index| %>
+    <div class='episode-select' href='<%= game_episode_path + "/#{index}" %>'>
+      <div class='episode-description'>
+        <div class='ep-number'><%= ep[0] %></div>
+        <div class='ep-title'><%= ep[1] %></div>
+        <div class='ep-brief'><%= ep[2] %></div>
+      </div>
+    </div>
+  <% end %>
 </div>
