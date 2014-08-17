@@ -1,10 +1,7 @@
 root = exports ? this
 	
 class Key extends Phaser.Group
-	Colors = { 
-		# NORMAL: 0xFFFFFF
-		# OVER:	0xDDDDDD
-		# DOWN:	0xEEEEEE		
+	Colors = { 		
 		NORMAL: '#FFFFFF'
 		OVER:	'#DDDDDD'
 		DOWN:	'#EEEEEE'
@@ -14,19 +11,17 @@ class Key extends Phaser.Group
 		OVER:	0x1
 		DOWN:	0x2
 	}
-
-	constructor: (game, letter)->
+	@KEYSIZE = 50
+	constructor: (game, letter, keycode)->
 		super(game, null, "SoftKeyboard-Key")
 		style = { font: "32px Arial", fill: "#aabbcc" }
 		text = new Phaser.Text(game, 14, 5, letter, style)
-		@keysize = 50
-		@keycode = letter
+		@keysize = Key.KEYSIZE
+		@letter = letter
+		@keycode = keycode
 		@state = States.NORMAL
 		@bg = new Phaser.Graphics(game, 0, 0)
-		# bg.beginFill(0xEEEEEE);
-		# @bgFill(Colors.NORMAL)
-		
-		# bmd = new Phaser.BitmapData(game, null, @keysize, @keysize)
+
 		@bmd = game.add.bitmapData(@keysize, @keysize);
 		@bmd.ctx.beginPath()
 		@bmd.ctx.rect(0, 0, @keysize, @keysize)
@@ -34,15 +29,9 @@ class Key extends Phaser.Group
 		@bmd.ctx.fill()
 
 		sprite = new Phaser.Sprite(game, 0, 0, @bmd)
-		# @add(bg)
 		@add(sprite)
-		# @add(@bg)
 		@add(text)
 
-		# surface = new Phaser.Graphics(game, 0, 0)
-		# surface.beginFill(0xFFFFFF, 0)
-		# surface.lineStyle(2, 0xFFFFFF, 0)
-		# surface.drawRect(0, 0, @keysize, @keysize)
 		sprite.inputEnabled = true;
 		sprite.events.onInputOver.add(@inputOver, this)
 		sprite.events.onInputOut.add(@inputOut, this)
@@ -53,7 +42,7 @@ class Key extends Phaser.Group
 		@bgFill(Colors.OVER)
 		@state = States.OVER
 		if @keyover_callback
-			@keyover_callback(@keycode)
+			@keyover_callback(this)
 
 	inputOut: ->
 		@bgFill(Colors.NORMAL)
@@ -63,6 +52,8 @@ class Key extends Phaser.Group
 		if @state == States.OVER
 			@bgFill(Colors.DOWN)
 			console.log(@keycode)
+		if @keydown_callback
+			@keydown_callback(this)
 
 	upHandler: ->
 		if @state == States.OVER
@@ -78,79 +69,122 @@ class Key extends Phaser.Group
 	keyOver: (callback)->
 		@keyover_callback = callback
 
-class SoftKeyboard
-	# @MASK: null
-	# @modals: {}
-	# @init: ->
-	# 	@maskInit()
-	# 	$('button[data-toggle="modal"]').each ->
-	# 		mm = new ModalModule($(this))
-	# 		ModalModule.modals[mm.id] = mm
+	keyDown: (callback) ->
+		@keydown_callback = callback
 
-	# @maskInit: ->
-	# 	@mask = $('<div></div>')
-	# 	@mask.addClass('modal-mask')
-	# 	@mask.attr('')
-	# 	$('body').append(@mask)
-	# 	@mask.hide()
-	# 	ModalModule.MASK = @mask
+	toString: ()->
+		{keycode: @keycode, letter: @letter}.toString()
+
+class InputBar extends Phaser.Group
+	constructor: (game, keyboard)->
+		super(game, null, "SoftKeyboard-InputBar")
+		@game = game
+		@cursor_pos = 0
+		@ch_queue = []
+
+		@keysize = keyboard.keysize
+		@row_size = keyboard.row_size
+
+		@bmd = game.add.bitmapData(@row_size*@keysize, @keysize);
+		@bmd.ctx.beginPath()
+		@bmd.ctx.rect(0, 0, @row_size*@keysize, @keysize)
+		@bmd.ctx.fillStyle = '#DDDDEE';
+		@bmd.ctx.fill()
+		sprite = new Phaser.Sprite(game, 0, 0, @bmd)
+
+		@add(sprite)
+
+	addCh: (key)->
+		@ch_queue.push(key)
+		@cursor_pos += 1
+		@update_text()
+
+	backspace: ->
+		return if @ch_queue.length==0
+		@ch_queue.pop()
+		@cursor_pos -= 1
+		@update_text()
+
+	enter: ->
+		code_ar = []
+		for key in @ch_queue
+			code_ar.push(key.keycode)
+		console.log(code_ar)
+		alert(code_ar)
+		@removeAll()
+
+	update_text: ->
+		tmp = @ch_queue
+		@removeAll()
+		@ch_queue = tmp
+		visible_chs = if @ch_queue.length>@row_size then @ch_queue[-@row_size..-1] else @ch_queue
+		for ch, i in visible_chs
+			ch_im = @createCh(ch.letter)
+			ch_im.x = i*@keysize
+			@add(ch_im)
+
+	removeAll: ->
+		if @children.length > 1
+			@removeBetween(1, @children.length-1)
+		@ch_queue = []
+
+	createCh: (ch)->
+		style = { font: "#{@keysize}px Arial", fill: "#996699" }
+		text = new Phaser.Text(@game, 14, 5, ch, style)
+		text.y = -4
+		text
+
+class SoftKeyboard
 
 	constructor: (game)->
-		kbs = new Phaser.Group(game, undefined, "SoftKeyboard")
+		@kbs = kbs = new Phaser.Group(game, undefined, "SoftKeyboard")
 		@keys = {}
-		for i in [0..68]
-			letter = String.fromCharCode(48+i)
-			key = new Key(game, letter)
+		@row_size = 12
+		@keysize = Key.KEYSIZE
+		that = @
+		for i in [0..70]
+			letter = if i == 69 then '←' else String.fromCharCode(48+i)
+			if i == 69 
+				keycode = 8 
+				letter = '←'
+			else if i==70
+				keycode = 13
+				letter = '√'
+			else
+				keycode = 48+i
+				letter = String.fromCharCode(48+i)
+			key = new Key(game, letter, keycode)
 			kbs.add(key)
-			key.x = (i%12)*(key.keysize+0)
-			key.y = Math.floor(i/12)*(key.keysize+0)
-			@keys[letter] = key
+			key.x = (i%@row_size)*(key.keysize+0)
+			key.y = Math.floor(i/@row_size)*(key.keysize+0)
+			@keys[keycode] = key
 			keys = @keys
 			# key.keyOver()
-			key.keyOver (keycode)->
+			key.keyOver (key)->
 				for k,v of keys
-					if k != keycode
+					if parseInt(k) != key.keycode
 						v.inputOut()
+			key.keyDown (key) ->
+				that.handleKey(key)
+
+		@inputbar = new InputBar(game, this)
 
 		kbs.x = game.world.width/2 - kbs.width/2
-		# text = game.add.text(0, 0, "keyboard", style, kbs)
-		# kbs.setAll('x', 100)
-		# text.x = 1000
-		# console.log kbs
-		# @button = button
-		# @id = button.attr 'data-target'
-		# @dialog = $("##{@id}")
-		# @close = @dialog.children("[data-dismiss='modal']")
-		# @mask = ModalModule.MASK
-		# @initButton()
-		# @initDialog()
-		# @setActivate(->)
-		# @setDeactivate(->)
+		kbs.y = game.world.height - (kbs.height + 24);
+		kbs.add(@inputbar)
+		kbs.alpha = 0.95
 
-	# initButton: ->
-	# 	@button.click =>
-	# 		@activate()
-	# 		false
-	# 	@close.click =>
-	# 		@deactivate()
+	hide: ->
+		@kbs.visible = false
 
-	# initDialog: ->
-	# 	@dialog.hide()
-
-	# activate: ->
-	# 	@dialog.show()
-	# 	@mask.show()
-	# 	@activateCallBack()
-
-	# deactivate: ->
-	# 	@dialog.hide()
-	# 	@mask.hide()
-	# 	@deactivateCallBack()
-
-	# setActivate: (callback) ->
-	# 	@activateCallBack = callback
-
-	# setDeactivate: (callback) ->
-	# 	@deactivateCallBack = callback 
+	handleKey: (key)->
+		# alert keycode
+		switch key.keycode
+			when 8
+				@inputbar.backspace()
+			when 13
+				@inputbar.enter()
+			else
+				@inputbar.addCh(key)
 
 root.injectClass('SoftKeyboard', SoftKeyboard)
