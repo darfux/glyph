@@ -20,7 +20,6 @@ class Key extends Phaser.Group
 		@letter = letter
 		@keycode = keycode
 		@state = States.NORMAL
-		@bg = new Phaser.Graphics(game, 0, 0)
 
 		@bmd = game.add.bitmapData(@keysize, @keysize);
 		@bmd.ctx.beginPath()
@@ -105,13 +104,6 @@ class InputBar extends Phaser.Group
 		@cursor_pos -= 1
 		@update_text()
 
-	enter: ->
-		code_ar = []
-		for key in @ch_queue
-			code_ar.push(key.keycode)
-		console.log(code_ar)
-		alert(code_ar)
-		@removeAll()
 
 	update_text: ->
 		tmp = @ch_queue
@@ -134,13 +126,14 @@ class InputBar extends Phaser.Group
 		text.y = -4
 		text
 
-class SoftKeyboard
+class SoftKeyboard extends Phaser.Group
 
 	constructor: (game)->
-		@kbs = kbs = new Phaser.Group(game, undefined, "SoftKeyboard")
+		super(game, null, "SoftKeyboard")
 		@keys = {}
 		@row_size = 12
 		@keysize = Key.KEYSIZE
+		@onPosted = new Phaser.Signal()
 		that = @
 		for i in [0..70]
 			letter = if i == 69 then '←' else String.fromCharCode(48+i)
@@ -154,7 +147,7 @@ class SoftKeyboard
 				keycode = 48+i
 				letter = String.fromCharCode(48+i)
 			key = new Key(game, letter, keycode)
-			kbs.add(key)
+			@add(key)
 			key.x = (i%@row_size)*(key.keysize+0)
 			key.y = Math.floor(i/@row_size)*(key.keysize+0)
 			@keys[keycode] = key
@@ -169,13 +162,12 @@ class SoftKeyboard
 
 		@inputbar = new InputBar(game, this)
 
-		kbs.x = game.world.width/2 - kbs.width/2
-		kbs.y = game.world.height - (kbs.height + 24);
-		kbs.add(@inputbar)
-		kbs.alpha = 0.95
+		@y = game.camera.view.height - (@height + 24);
+		@add(@inputbar)
+		@alpha = 0.95
 
 	hide: ->
-		@kbs.visible = false
+		@visible = false
 
 	handleKey: (key)->
 		# alert keycode
@@ -183,8 +175,17 @@ class SoftKeyboard
 			when 8
 				@inputbar.backspace()
 			when 13
-				@inputbar.enter()
+				@handlePost()
 			else
 				@inputbar.addCh(key)
+	handlePost: ->
+		code_ar = []
+		for key in @inputbar.ch_queue
+			code_ar.push(key.keycode)
+		console.log(code_ar)
+		alert(code_ar)
+		@inputbar.removeAll()
+		@onPosted.dispatch(this)
+
 
 root.injectClass('SoftKeyboard', SoftKeyboard)

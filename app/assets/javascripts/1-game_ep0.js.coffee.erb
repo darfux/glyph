@@ -12,8 +12,8 @@ create = ->
     img.x = @game.world.width/2 - img.width/2
     img.y = 48
     skb = new SoftKeyboard(@game)
-    # skb.hide()
-
+    @game.world.add(skb)
+    Util.setXCenter(skb)
 
 root.init_ep0 = ->
 	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'glyph-0', { preload: preload, create: create });
