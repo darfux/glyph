@@ -13,5 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require phaser
+//= require kickstart
 //= require turbolinks
 //= require_tree .

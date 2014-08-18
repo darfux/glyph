@@ -1,0 +1,25 @@
+root = exports ? this
+
+QuestionBoard = root.getClassQuestionBoard()
+
+preload = ->
+	# @game.load.image('background', '<%= asset_path("gensokyo.png") %>')
+	@game.load.image('yyy','<%= asset_path("yyy.png") %>')
+
+create = ->
+	qb = new QuestionBoard(@game)
+	qb.alpha = 0
+	@game.world.add(qb)
+	Util.setXCenter(qb)
+	qb.popup()
+
+
+# @desti = null
+update = ->
+
+
+render = ->
+
+
+root.init_eptest = ->
+	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'glyph-test', { preload: preload, create: create, update: update, render: render })

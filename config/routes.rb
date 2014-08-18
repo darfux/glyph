@@ -1,4 +1,17 @@
 Rails.application.routes.draw do
+  resources :users
+
+  namespace :user do
+  get 'session/new'
+  get 'login', to: 'session#new', as: :login
+  delete 'logout', to: 'session#destroy', as: :logout
+  post 'sessions', to: 'session#create', as: :sessions
+  end
+
+  get 'main/index', as: :game
+
+  get 'game/episode/:ep', to: 'main#episode', as: :game_episode
+  root to: 'user/session#new'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
