@@ -1,0 +1,65 @@
+root = exports ? this
+
+require 'fux.Phaser.Util'
+# class Util
+# 	@setXCenter = (displayObject)->
+# 		if displayObject.parent
+# 			displayObject.x = displayObject.parent.width/2 - displayObject.width/2
+SoftKeyboard = null
+ready = ->
+	SoftKeyboard = root.getClassSoftKeyboard()
+
+$(document).ready(ready)
+$(document).on('page:load', ready)
+
+class Tip extends Phaser.Group
+	constructor: (game, text)->
+		super(game, null, "QuestionBoard-Tip")		
+		style = { font: "32px Arial", fill: "#233333" }
+		text = new Phaser.Text(game, 14, 5, text, style)
+		@tip_width = 480
+		@tip_height = 48
+		bmd = game.add.bitmapData(@tip_width, @tip_height);
+		bmd.ctx.beginPath()
+		bmd.ctx.rect(0, 0, @tip_width, @tip_height)
+		bmd.ctx.fillStyle = '#FFDDEE';
+		bmd.ctx.fill()
+		sprite = new Phaser.Sprite(game, 0, 0, bmd)
+
+		@add(sprite)
+		@add(text)
+		Util.setXCenter(text)
+
+class ImgShow extends Phaser.Sprite
+	constructor: (game, resource_id)->
+		super(game, 0, 0, 'yyy')
+		@scale.setTo(0.8)
+
+
+class QuestionBoard extends Phaser.Group
+	constructor: (game)->
+		super(game, null, "QuestionBoard")
+		@tip = new Tip(game, "嗨～遇到一个新事物！")
+		@onComplete = new Phaser.Signal()
+		@add(@tip)
+		@img = new ImgShow(game)
+		@add(@img)
+		@img.y = @tip.y+@tip.height+30;
+		kbs = new SoftKeyboard(game)
+		@add(kbs)
+		Util.setXCenter(kbs)
+		Util.setXCenter(@img)
+		Util.setXCenter(@tip)
+		that = @
+		kbs.onPosted.add ->
+			that.keyBoardPosted()
+
+	popup: ->
+		@alpha = 0
+		@game.add.tween(this).to({ alpha: 1 }, 1500, Phaser.Easing.Quadratic.InOut, true, 0);
+
+	keyBoardPosted: ->
+		@onComplete.dispatch(this)
+
+root.injectClass('QuestionBoard', QuestionBoard)
+
