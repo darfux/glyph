@@ -1,0 +1,9 @@
+#-import glyph.game.lib.Test
+
+class Util
+	@setXCenter = (displayObject, container)->
+		Test.test()
+		if container != undefined
+			displayObject.x = container.width/2 - displayObject.width/2
+		else if displayObject.parent
+			displayObject.x = displayObject.parent.width/2 - displayObject.width/2

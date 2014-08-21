@@ -1,6 +1,5 @@
-root = exports ? this
-
-QuestionBoard = root.getClassQuestionBoard()
+#-nobag
+#-import glyph.game.lib.QuestionBoard
 
 player = null
 game = null
@@ -39,12 +38,11 @@ popQusetionBoard = ->
 	qb.popup()
 	Util.setXCenter(qb, game.camera.view)
 	qb.fixedToCamera = true
-	that = this
-	qb.onComplete.add ->
+	qb.onComplete.add =>
 		game.world.remove(qb)
 		qb.destroy()
 		timer = game.time.create(true);
-		timer.add(100, resumeBaseWorld, that)
+		timer.add(100, resumeBaseWorld, this)
 		timer.start()
 
 desti = null

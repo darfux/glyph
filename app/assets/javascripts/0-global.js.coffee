@@ -1,36 +1,33 @@
-root = exports ? this
-
+#-nobag
 Function::property = (prop, desc) ->
   Object.defineProperty @prototype, prop, desc
 
-@klass_pool = {}
-root.injectClass = (name, klass)->
-	@klass_pool[name] = klass
-	root["getClass#{name}"] = ->
-		klass
+__klass_pool = {}
+
 root.p = ()->
 	if console
         console.log.apply(console, arguments)
 
-root.require = (namespace)->
-	@['test_method'] = ->
-		p('hello!')
+root.fetch = (namespace)->
+	container = __klass_pool
+	spaces = namespace.split('.')
+	p namespace, container
+	for node in spaces
+		container = container[node]
+	container
 
-root.package = (namespace)->
+root.bag = (namespace, klass)->
+	container = __klass_pool
+	spaces = namespace.split('.')
+	for node in spaces[0..-2]
+		container = (container[node] ||= {})
+	container[spaces[-1..]] = klass
+	p __klass_pool
 
 ready = ->
 	cont = $('body').attr('cont')
 	action = $('body').attr('action')
-	f() if f = eval("root.#{cont}_#{action}_js")
-
-class Util
-	@setXCenter = (displayObject, container)->
-		if container != undefined
-			displayObject.x = container.width/2 - displayObject.width/2
-		else if displayObject.parent
-			displayObject.x = displayObject.parent.width/2 - displayObject.width/2
-
-root.Util = Util
+	f() if f = root["#{cont}_#{action}_js"]
 
 $(document).ready(ready)
 $(document).on('page:load', ready)

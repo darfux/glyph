@@ -15,4 +15,8 @@
 //= require phaser
 //= require kickstart
 //= require turbolinks
+//= require 0-global
+//= require game/main
+//= require_tree ./game/lib/
+//= require_tree ./game/episode/
 //= require_tree .

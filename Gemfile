@@ -42,3 +42,5 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'phaser-rails'
 
 gem 'quiet_assets'
+
+gem 'pry',        group: :development

@@ -1,16 +1,5 @@
-root = exports ? this
-
-require 'fux.Phaser.Util'
-# class Util
-# 	@setXCenter = (displayObject)->
-# 		if displayObject.parent
-# 			displayObject.x = displayObject.parent.width/2 - displayObject.width/2
-SoftKeyboard = null
-ready = ->
-	SoftKeyboard = root.getClassSoftKeyboard()
-
-$(document).ready(ready)
-$(document).on('page:load', ready)
+#-import glyph.game.lib.Util
+#-import glyph.game.lib.SoftKeyboard
 
 class Tip extends Phaser.Group
 	constructor: (game, text)->
@@ -39,6 +28,7 @@ class ImgShow extends Phaser.Sprite
 class QuestionBoard extends Phaser.Group
 	constructor: (game)->
 		super(game, null, "QuestionBoard")
+		Test.test()
 		@tip = new Tip(game, "嗨～遇到一个新事物！")
 		@onComplete = new Phaser.Signal()
 		@add(@tip)
@@ -50,9 +40,8 @@ class QuestionBoard extends Phaser.Group
 		Util.setXCenter(kbs)
 		Util.setXCenter(@img)
 		Util.setXCenter(@tip)
-		that = @
-		kbs.onPosted.add ->
-			that.keyBoardPosted()
+		kbs.onPosted.add =>
+			@keyBoardPosted()
 
 	popup: ->
 		@alpha = 0
@@ -60,6 +49,4 @@ class QuestionBoard extends Phaser.Group
 
 	keyBoardPosted: ->
 		@onComplete.dispatch(this)
-
-root.injectClass('QuestionBoard', QuestionBoard)
 
