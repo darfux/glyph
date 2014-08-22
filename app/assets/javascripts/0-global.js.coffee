@@ -1,4 +1,3 @@
-#-nobag
 Function::property = (prop, desc) ->
   Object.defineProperty @prototype, prop, desc
 
@@ -11,7 +10,6 @@ root.p = ()->
 root.fetch = (namespace)->
 	container = __klass_pool
 	spaces = namespace.split('.')
-	p namespace, container
 	for node in spaces
 		container = container[node]
 	container
@@ -22,7 +20,6 @@ root.bag = (namespace, klass)->
 	for node in spaces[0..-2]
 		container = (container[node] ||= {})
 	container[spaces[-1..]] = klass
-	p __klass_pool
 
 ready = ->
 	cont = $('body').attr('cont')

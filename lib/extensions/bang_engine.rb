@@ -6,9 +6,8 @@ module BangBang
 
     def evaluate(scope, locals, &block)
       if file.include? app_asset_path # avoid modifying rails default files
-        handle_import
         add_root
-        add_bag_info unless @nobag
+        add_bag_info
       end
       # print data
       super
@@ -18,19 +17,8 @@ module BangBang
       def add_root
         @data = "root = exports ? this\n"+@data
       end
-      def handle_import
-        tmp_data = ""
-        @data.each_line do |l|
-          if l.chomp.chomp=='#-nobag'
-            @nobag = true
-            next
-          end
-          tmp_data<<l
-        end
-        @data = tmp_data
-        #tmp = requires.join + fetch_statements.join # ensure taht the requires are on the top of file
-      end
       def add_bag_info
+        return if data.each_line.to_a.last.chomp.chomp == '#-nobag'
         bag_path = file.split(app_asset_path)[1].split('.')[0]
         tmp = bag_path.split('/')
         klass = tmp.last.classify
