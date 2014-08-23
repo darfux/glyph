@@ -1,5 +1,6 @@
 #-import glyph.game.lib.Util
 #-import glyph.game.lib.SoftKeyboard
+class Ep0
 
 preload = ->
     @game.load.image('cirno', '<%= asset_path("test.jpg") %>')
@@ -14,7 +15,6 @@ create = ->
     @game.world.add(skb)
     Util.setXCenter(skb)
 
-class Ep0
     
 root.init_ep0 = ->
 	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'glyph-0', { preload: preload, create: create });
