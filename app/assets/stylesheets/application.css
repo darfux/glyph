@@ -12,5 +12,14 @@
  *
  *= require_tree .
  *= require_self
+ *= require kickstart-buttons
+ *= require kickstart-forms
+ *= require kickstart-menus
+ *= require kickstart-grid
+ *= require jquery.fancybox-1.3.4
+ *= require kickstart-slideshow
+ *= require prettify
+ *= require tiptip
+ *= require fonts/fontawesome/css/font-awesome.min
  *= require kickstart
  */
