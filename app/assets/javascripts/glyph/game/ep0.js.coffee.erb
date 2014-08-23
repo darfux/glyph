@@ -14,5 +14,7 @@ create = ->
     @game.world.add(skb)
     Util.setXCenter(skb)
 
+class Ep0
+    
 root.init_ep0 = ->
 	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'glyph-0', { preload: preload, create: create });

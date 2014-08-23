@@ -22,7 +22,7 @@ module BangBang
         bag_path = file.split(app_asset_path)[1].split('.')[0]
         tmp = bag_path.split('/')
         klass = tmp.last.classify
-        bag = "#{app_name}." + tmp[0..-2].join('.') + ".#{klass}"
+        bag = tmp[0..-2].join('.') + ".#{klass}"
         @data+="\nbag '#{bag}', #{klass}" #add a '\n' at head to avoid concat with oringinal file
       end
       def app_name
