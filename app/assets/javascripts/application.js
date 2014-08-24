@@ -15,5 +15,6 @@
 //= require phaser
 //= require kickstart
 //= require turbolinks
+//= require coffee_bag
 //= require 0-global
 //= require_tree .

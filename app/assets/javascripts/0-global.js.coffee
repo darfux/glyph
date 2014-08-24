@@ -1,25 +1,9 @@
 Function::property = (prop, desc) ->
   Object.defineProperty @prototype, prop, desc
 
-__klass_pool = {}
-
 root.p = ()->
 	if console
         console.log.apply(console, arguments)
-
-root.fetch = (namespace)->
-	container = __klass_pool
-	spaces = namespace.split('.')
-	for node in spaces
-		container = container[node]
-	container
-
-root.bag = (namespace, klass)->
-	container = __klass_pool
-	spaces = namespace.split('.')
-	for node in spaces[0..-2]
-		container = (container[node] ||= {})
-	container[spaces[-1..]] = klass
 
 ready = ->
 	cont = $('body').attr('cont')

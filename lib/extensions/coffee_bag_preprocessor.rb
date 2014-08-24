@@ -1,16 +1,35 @@
-module BangBang
-  class Processor < Sprockets::DirectiveProcessor
+module CoffeeBag
+  class Preprocessor < Sprockets::DirectiveProcessor
+    # A typical prepared data is like below:
+
+    #   #= require app_name/klass
+    #   ep0 = fetch 'app_name.klass'
+    #
+    #   root = exports ? this
+    #
+    #   InternalKlass = null
+    #   $(document).ready ->
+    #     InternalKlass = fetch('app_name.self_bag.InternalKlass')
+    #
+    #   class Test
+    #     @test: ->
+    #       123
+    #
+    #   bag 'app_name.self_bag.Test', Test
+
     def prepare
       if file.include? app_asset_path and file.include? '.coffee' # avoid modifying rails default files
-        handle_import(file.include? app_asset_path+app_name)
+        fill(file.include? bag_path)
       end
       super
     end
-    private
-      def handle_import(withbag)
+
+    protected
+
+      def fill(withbag)
         requires = []
         fetch_statements = []
-        tmp_data = ""
+        filtered_data = ""
         @data.each_line do |l|
           if l[0..7]=='#-import'
             package = l.split[1]
@@ -20,24 +39,21 @@ module BangBang
             fetch_statements.push "#{klass} = fetch '#{package}'\n"
             next
           end
-          # if l.include?("class #{klass}") && @hasbag != false
-          #   @hasbag = true
-          # end
-          tmp_data<<l
+          filtered_data<<l
         end
-        tmp = requires.join + fetch_statements.join # ensure that the requires are on the top of file
+        require_statements = requires.join + fetch_statements.join # ensure that the requires are on the top of file
         @data = (
+          header = require_statements + root_statement
           if withbag
-            internal_statements = handle_internal
-            tmp+internal_statements+tmp_data
+            header+internal_statements+filtered_data+bag_statement
           else
-            tmp+tmp_data+"\n#-nobag\n"
+            header+filtered_data
           end
         )
       end
-      def handle_internal
+
+      def internal_statements
         current_file_name = file.split('/')[-1]
-        # dir = Dir.new()
         internal_klasses = []
         orgdir = Dir.pwd
         Dir.chdir file.split('/')[0..-2].join('/')
@@ -55,11 +71,29 @@ module BangBang
         statements<<"\n"
         statements
       end
+
+      def root_statement
+        "\nroot = exports ? this\n"
+      end
+
+      def bag_statement
+        bag_path = file.split(app_asset_path)[1].split('.')[0]
+        tmp = bag_path.split('/')
+        klass = tmp.last.classify
+        bag = tmp[0..-2].join('.') + ".#{klass}"
+        "\nbag '#{bag}', #{klass}\n" #add a '\n' at head to avoid concat with oringinal file
+      end
+
       def app_name
         @app_name ||= Rails.application.class.to_s.split("::").first.downcase
       end
+
       def app_asset_path
         @app_asset_path ||= Rails.root.to_s+"/app/assets/javascripts/"
+      end
+
+      def bag_path
+        app_asset_path+app_name
       end
   end
 end
