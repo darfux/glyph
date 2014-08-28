@@ -63,6 +63,7 @@ module CoffeeBag
           next if f==current_file_name
           internal_klasses.push f.split('.')[0].classify
         end
+        return "" if internal_klasses.empty?
         statements = "\n"+internal_klasses.join(' = ')+" = null\n"
         statements<<"$(document).ready ->\n"
         internal_klasses.each do |k|
