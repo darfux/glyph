@@ -1,0 +1,142 @@
+#-import glyph.game.lib.QuestionBoard
+#-import glyph.game.lib.Util
+
+
+player = null
+game = null
+timer = null
+
+class CompassDirection
+	@NW		= "NW"
+	@N		= "N"
+	@NE		= "NE"
+	@E		= "E"
+	@SE		= "SE"
+	@S		= "S"
+	@SW		= "SW"
+	@W		= "W"
+	@CENTER = "Center"
+
+class Ep1
+	
+root.init_epmaptest = ->
+	init()
+
+init = ->
+	game = new Phaser.Game(1080, 720, Phaser.CANVAS, 'glyph-maptest', { preload: preload, create: create, update: update })
+
+preload = ->
+	game.load.image('background', '<%= asset_path("map-1.jpg") %>')
+	game.load.image('yyy','<%= asset_path("yyy.png") %>')
+	game.load.spritesheet('player_walktile','<%= asset_path("boy.png") %>', 675/8, 686/8)
+
+create = ->
+	tileSprite = game.add.tileSprite(0, 0, 1080, 1920, 'background')
+	game.world.setBounds(0, 0, 1080, 1920)
+	game.physics.startSystem(Phaser.Physics.ARCADE)
+	game.physics.arcade.setBoundsToWorld()
+
+	player = game.add.sprite(game.world.centerX, game.world.centerY, 'player_walktile')
+	WALK_FRAME = 12
+	player.animations.add('walk_s', [0..7], WALK_FRAME, true)
+	player.animations.add('walk_w', [8..15], WALK_FRAME, true)
+	player.animations.add('walk_e', [16..23], WALK_FRAME, true)
+	player.animations.add('walk_n', [24..31], WALK_FRAME, true)
+	player.animations.add('walk_sw', [32..39], WALK_FRAME, true)
+	player.animations.add('walk_se', [40..47], WALK_FRAME, true)
+	player.animations.add('walk_nw', [48..55], WALK_FRAME, true)
+	player.animations.add('walk_ne', [56..63], WALK_FRAME, true)
+	player.animations.stop('walk_s', true)
+
+	game.physics.arcade.enable(player)
+	game.camera.follow(player)
+	player.anchor.set(0.5);
+
+	@mouse = game.input.keyboard.createCursorKeys()
+
+	tileSprite.inputEnabled = true;
+	tileSprite.events.onInputDown.add(handleClick, this)
+
+popQusetionBoard = ->
+	qb = new QuestionBoard(game)
+	qb.alpha = 0
+	game.world.add(qb)
+	qb.popup()
+	Util.setXCenter(qb, game.camera.view)
+	qb.fixedToCamera = true
+	qb.onComplete.add =>
+		game.world.remove(qb)
+		qb.destroy()
+		timer = game.time.create(true);
+		timer.add(100, resumeBaseWorld, this)
+		timer.start()
+
+desti = null
+freeze = false
+handleClick = (sprte, pointer)->
+	# if timer then p timer;asdfasfasf();
+	return if freeze
+	# pointer = game.input.mousePointer
+	# if !(pointer.isDown && (not pointer.justPressed(100)))
+	# p event
+	# return
+	desti = new Phaser.Point(pointer.worldX, pointer.worldY)
+	WALK_SPEED = 200
+	game.physics.arcade.moveToXY(player, desti.x, desti.y, WALK_SPEED)
+
+freezeBaseWorld = ->
+	freeze = true
+	player.body.velocity.setTo(0, 0) 
+	desti = null
+
+resumeBaseWorld = ->
+	freeze = false
+		
+update = ->
+	if desti
+		facing = direction_judge(player.body.angle)
+		switch facing
+			when CompassDirection.N
+				player.animations.play('walk_n', true)
+			when CompassDirection.S
+				player.animations.play('walk_s', true)
+			when CompassDirection.W
+				player.animations.play('walk_w', true)
+			when CompassDirection.E
+				player.animations.play('walk_e', true)
+			when CompassDirection.SE
+				player.animations.play('walk_se', true)
+			when CompassDirection.SW
+				player.animations.play('walk_sw', true)
+			when CompassDirection.NE
+				player.animations.play('walk_ne', true)
+			when CompassDirection.NW
+				player.animations.play('walk_nw', true)
+				# ...
+		seed = Math.random()
+		if false && seed>0.22 && seed<0.2233
+			freezeBaseWorld()
+			popQusetionBoard()
+		else if Phaser.Rectangle.containsPoint(player.body, desti)
+			player.body.velocity.setTo(0, 0)
+			player.animations.stop(null, true)
+			desti = null
+
+direction_judge = (angle)->
+	# if delP.isZero()
+	# 	return CompassDirection.CENTER
+	# op = new Phaser.Point(0, 0)
+	# angle = op.angle(deltP);
+	pi = Math.PI
+	if((angle >= 0 && angle <= pi/6)||(angle < 0 && angle > -pi/6)) then return CompassDirection.E
+	if(angle > pi/6 && angle <= pi/3) then return CompassDirection.SE
+	if(angle > pi/3 && angle <= pi*2/3) then return CompassDirection.S
+	if(angle > pi*2/3 && angle <= pi*5/6) then return CompassDirection.SW
+	if((angle > pi*5/6 && angle <= pi)||(angle < -pi*5/6 && angle >= -pi)) then return CompassDirection.W
+	if(angle > -pi*5/6 && angle <= -pi*2/3) then return CompassDirection.NW
+	if(angle > -pi*2/3 && angle <= -pi/3) then return CompassDirection.N
+	if(angle > -pi/3 && angle <= -pi/6) then return CompassDirection.NE
+	return CompassDirection.CENTER
+# render = ->
+# 	game.debug.cameraInfo(game.camera, 32, 32)
+# 	game.debug.spriteCoords(player, 32, 500)
