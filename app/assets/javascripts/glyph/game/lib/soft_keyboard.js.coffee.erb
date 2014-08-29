@@ -1,4 +1,5 @@
 class Key extends Phaser.Group
+	# internal class
 	class KeyFactory
 		@ENTER_CODE = -8
 		@BACKSPACE_CODE = -13
@@ -7,100 +8,102 @@ class Key extends Phaser.Group
 		@BACKSPACE = (game)->
 			new Key(game, @BACKSPACE_CODE, '←')
 
-	Colors = { 		
-		NORMAL: '#FFFFFF'
-		OVER:	'#DDDDDD'
-		DOWN:	'#EEEEEE'
-	}
-	States = @States = {
-		NORMAL: 0x0
-		OVER:	0x1
-		DOWN:	0x2
-	}
+	# public class attributes
 	<% CHARACTER_RES = 'characters_all'%>
-	@CHARACTER_RES = CHARACTER_RES = '<%= CHARACTER_RES %>'
-	@KEYSIZE = 50
+	@new            = KeyFactory
+	@CHARACTER_RES  = '<%= CHARACTER_RES %>'
+	@States         = {
+		NORMAL: 0x0
+		OVER:   0x1
+		DOWN:   0x2
+	}
+	@DEFAULT_SIZE = 50
 
-	@new = KeyFactory
+	# public class methods
 	@preload: (game)->
-		# path_prefix = "<%# image_path('characters/asset_mark.fake').split('asset_mark.fake')[0] %>"
-		# for i in [1..59]
-		# 	game.load.image("character-#{i}", "#{path_prefix}#{i}.png")
 		game.load.spritesheet(CHARACTER_RES,'<%= image_path("#{CHARACTER_RES}.png") %>', 160, 160, 59)
 
+	# internal class attributes
+	Colors          = {         
+		NORMAL: '#FFFFFF'
+		OVER:   '#DDDDDD'
+		DOWN:   '#EEEEEE'
+	}
+	CHARACTER_RES   = @CHARACTER_RES
+	DEFAULT_SIZE    = @DEFAULT_SIZE
+	States          = @States
+	BACKGROUD_COLOR	= '#FFFFFF'
+
+	# public instance methods
 	constructor: (game, keycode, letter, size)->
 		super(game, null, "SoftKeyboard-Key")
-		style = { font: "32px Arial", fill: "#233333" }
-		@keysize = size || Key.KEYSIZE
+		@keysize = size || DEFAULT_SIZE
 		@letter = keycode
 		@keycode = keycode
 		@state = States.NORMAL
-		if letter!=undefined
+
+		# init methods
+		init_background = =>
+			bmd = game.add.bitmapData(@keysize, @keysize);
+			bmd.ctx.beginPath()
+			bmd.ctx.rect(0, 0, @keysize, @keysize)
+			@background = new Phaser.Sprite(game, 0, 0, bmd)
+			@background.fillColor = (color)->
+				@key.ctx.fillStyle = color
+				@key.ctx.fill()
+			@background.fillColor(BACKGROUD_COLOR)
+			@add(@background)
+
+		init_with_character = =>
+			@character =new Phaser.Sprite(game, 0, 0, CHARACTER_RES, keycode)
+			@character.height = @character.width = @keysize
+			@add(@character)
+
+		init_with_letter = =>
+			style = { font: "32px Arial", fill: "#233333" }
 			text = new Phaser.Text(game, 14, 5, letter, style)
 			@letter = letter
-
-		@bmd = game.add.bitmapData(@keysize, @keysize);
-		@bmd.ctx.beginPath()
-		@bmd.ctx.rect(0, 0, @keysize, @keysize)
-		@bmd.ctx.fillStyle = '#FFFFFF';
-		@bmd.ctx.fill()
-
-		sprite = new Phaser.Sprite(game, 0, 0, @bmd)
-		@add(sprite)
-
-		if letter==undefined
-			@character = new Phaser.Group(game)
-			@character.add(new Phaser.Sprite(game, 0, 0, CHARACTER_RES, keycode))
-			@character.height = @character.width = @keysize
-			# sprite.loadTexture(CHARACTER_RES, 0)
-			@add(@character)
-		else
 			@add(text)
+		## ====
 
-		sprite.inputEnabled = true;
-		sprite.events.onInputOver.add(@inputOver, this)
-		sprite.events.onInputOut.add(@inputOut, this)
-		sprite.events.onInputDown.add(@downHandler, this)
-		sprite.events.onInputUp.add(@upHandler, this)
+		init_background()
+		if letter
+			init_with_letter()
+		else
+			init_with_character()
+		@enable_input()
 
-	inputOver: ->
-		@bgFill(Colors.OVER)
+	enable_input: =>
+		@background.inputEnabled = true;
+		e = @background.events
+		e.onInputOver.add(@overHandler, this)
+		e.onInputOut.add(@outHandler, this)
+		e.onInputDown.add(@downHandler, this)
+		e.onInputUp.add(@upHandler, this)
+		@keyOver = @keyOut = @keyDown = @keyUp = null
+
+	overHandler: =>
+		@background.fillColor(Colors.OVER)
 		@state = States.OVER
-		if @keyover_callback
-			@keyover_callback(this)
+		if @keyOver
+			@keyOver(this)
 
-	inputOut: ->
-		@bgFill(Colors.NORMAL)
+	outHandler: =>
+		@background.fillColor(Colors.NORMAL)
 		@state = States.NORMAL
-		if @keyout_callback
-			@keyout_callback(this)
+		if @keyOut
+			@keyOut(this)
 
-	downHandler: ->
+	downHandler: =>
 		if @state == States.OVER
-			@bgFill(Colors.DOWN)
+			@background.fillColor(Colors.DOWN)
 			console.log(@keycode)
-		if @keydown_callback
-			@keydown_callback(this)
+		if @keyDown
+			@keyDown(this)
 
 	upHandler: ->
 		if @state == States.OVER
-			@bgFill(Colors.OVER)
-
-	bgFill: (color)->
-		@bmd.ctx.fillStyle = color
-		@bmd.ctx.fill()
-		# @bg.beginFill(color);
-		# # @bg.lineStyle(2, 0x999999, 1)
-		# @bg.drawRect(0, 0, @keysize, @keysize)	
-
-	keyOver: (callback)->
-		@keyover_callback = callback
-
-	keyDown: (callback) ->
-		@keydown_callback = callback
-
-	keyOut: (callback) ->
-		@keyout_callback = callback
+			@background.fillColor(Colors.OVER)
 
 	toString: ()->
 		{keycode: @keycode, letter: @letter}.toString()
@@ -179,7 +182,7 @@ class SoftKeyboard extends Phaser.Group
 		super(game, null, "SoftKeyboard")
 		@keys = {}
 		@row_size = 13
-		@keysize = Key.KEYSIZE
+		@keysize = Key.DEFAULT_SIZE
 		@onPosted = new Phaser.Signal()
 		@key_pad = new Phaser.Group(game)
 		@key_preview = new Phaser.Group(game)
@@ -193,32 +196,32 @@ class SoftKeyboard extends Phaser.Group
 			@keys[keycode] = key
 			keys = @keys
 			# key.keyOver()
-			key.keyOver (key) =>
+			key.keyOver = (key) =>
 				bigKey = new Key(game, key.keycode, undefined, KEY_PREVIEW_SIZE)
 				@key_preview.removeAll(true)
 				@key_preview.add(bigKey)
 				# @add(bigKey)
 				for k,v of keys
 					if parseInt(k) != key.keycode
-						v.inputOut()
-			key.keyOut (key) =>
+						v.outHandler()
+			key.keyOut = (key) =>
 				for k,v of keys
 					if v.state == Key.States.OVER
 						return
 				@key_preview.removeAll(true)
 
-			key.keyDown (key) =>
+			key.keyDown = (key) =>
 				@inputbar.addCh(key)
 
 		backspace = Key.new.BACKSPACE(game)
 		backspace.x = ((KEY_NUM)%@row_size)*(key.keysize+0)
 		backspace.y = Math.floor((KEY_NUM)/@row_size)*(key.keysize+0)
-		backspace.keyDown (key) =>
+		backspace.keyDown = (key) =>
 			@inputbar.backspace()
 		enter = Key.new.ENTER(game)
 		enter.x = ((KEY_NUM+1)%@row_size)*(key.keysize+0)
 		enter.y = Math.floor((KEY_NUM+1)/@row_size)*(key.keysize+0)
-		enter.keyDown (key) =>
+		enter.keyDown = (key) =>
 			@handlePost()
 		@key_pad.add(enter)
 		@key_pad.add(backspace)
