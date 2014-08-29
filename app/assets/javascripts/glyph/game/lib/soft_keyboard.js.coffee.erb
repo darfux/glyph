@@ -1,23 +1,43 @@
 class Key extends Phaser.Group
+	class KeyFactory
+		@ENTER_CODE = -8
+		@BACKSPACE_CODE = -13
+		@ENTER = (game)->
+			new Key(game, @ENTER_CODE, '√')
+		@BACKSPACE = (game)->
+			new Key(game, @BACKSPACE_CODE, '←')
+
 	Colors = { 		
 		NORMAL: '#FFFFFF'
 		OVER:	'#DDDDDD'
 		DOWN:	'#EEEEEE'
 	}
-	States = {
+	States = @States = {
 		NORMAL: 0x0
 		OVER:	0x1
 		DOWN:	0x2
 	}
+	<% CHARACTER_RES = 'characters_all'%>
+	@CHARACTER_RES = CHARACTER_RES = '<%= CHARACTER_RES %>'
 	@KEYSIZE = 50
-	constructor: (game, letter, keycode)->
+
+	@new = KeyFactory
+	@preload: (game)->
+		# path_prefix = "<%# image_path('characters/asset_mark.fake').split('asset_mark.fake')[0] %>"
+		# for i in [1..59]
+		# 	game.load.image("character-#{i}", "#{path_prefix}#{i}.png")
+		game.load.spritesheet(CHARACTER_RES,'<%= image_path("#{CHARACTER_RES}.png") %>', 160, 160, 59)
+
+	constructor: (game, keycode, letter, size)->
 		super(game, null, "SoftKeyboard-Key")
-		style = { font: "32px Arial", fill: "#aabbcc" }
-		text = new Phaser.Text(game, 14, 5, letter, style)
-		@keysize = Key.KEYSIZE
-		@letter = letter
+		style = { font: "32px Arial", fill: "#233333" }
+		@keysize = size || Key.KEYSIZE
+		@letter = keycode
 		@keycode = keycode
 		@state = States.NORMAL
+		if letter!=undefined
+			text = new Phaser.Text(game, 14, 5, letter, style)
+			@letter = letter
 
 		@bmd = game.add.bitmapData(@keysize, @keysize);
 		@bmd.ctx.beginPath()
@@ -27,7 +47,15 @@ class Key extends Phaser.Group
 
 		sprite = new Phaser.Sprite(game, 0, 0, @bmd)
 		@add(sprite)
-		@add(text)
+
+		if letter==undefined
+			@character = new Phaser.Group(game)
+			@character.add(new Phaser.Sprite(game, 0, 0, CHARACTER_RES, keycode))
+			@character.height = @character.width = @keysize
+			# sprite.loadTexture(CHARACTER_RES, 0)
+			@add(@character)
+		else
+			@add(text)
 
 		sprite.inputEnabled = true;
 		sprite.events.onInputOver.add(@inputOver, this)
@@ -44,6 +72,8 @@ class Key extends Phaser.Group
 	inputOut: ->
 		@bgFill(Colors.NORMAL)
 		@state = States.NORMAL
+		if @keyout_callback
+			@keyout_callback(this)
 
 	downHandler: ->
 		if @state == States.OVER
@@ -68,6 +98,9 @@ class Key extends Phaser.Group
 
 	keyDown: (callback) ->
 		@keydown_callback = callback
+
+	keyOut: (callback) ->
+		@keyout_callback = callback
 
 	toString: ()->
 		{keycode: @keycode, letter: @letter}.toString()
@@ -109,69 +142,106 @@ class InputBar extends Phaser.Group
 		@ch_queue = tmp
 		visible_chs = if @ch_queue.length>@row_size then @ch_queue[-@row_size..-1] else @ch_queue
 		for ch, i in visible_chs
-			ch_im = @createCh(ch.letter)
-			ch_im.x = i*@keysize
-			@add(ch_im)
+			keycode = ch.keycode
+			# game.add.sprite(0, 0, bmd);
+			# game.input.onDown.add(recolor, this);
+
+			# character.add()
+			bmd = @game.make.bitmapData(160, 160)
+			bmd.draw(new Phaser.Sprite(@game, 0, 0, Key.CHARACTER_RES, keycode), 0, 0, 160, 160)
+			bmd.update()
+			
+			character = new Phaser.Group(@game)
+			character.add(new Phaser.Sprite(@game, 0, 0, bmd))
+			character.height = character.width = @keysize
+			character.x = i*@keysize
+			@add(character)
+			bmd.replaceRGB(0,0,0,255, 70,30,30,255)
 
 	removeAll: ->
 		if @children.length > 1
-			@removeBetween(1, @children.length-1)
+			@removeBetween(1, @children.length-1, true)
 		@ch_queue = []
 
 	createCh: (ch)->
 		style = { font: "#{@keysize}px Arial", fill: "#996699" }
-		text = new Phaser.Text(@game, 14, 5, ch, style)
+		text = new Phaser.Text(@game, 14, 5, ch.toString(), style)
 		text.y = -4
 		text
 
 class SoftKeyboard extends Phaser.Group
+	KEY_NUM = 59
+
+	@preload: (game)->
+		Key.preload(game)
 
 	constructor: (game)->
 		super(game, null, "SoftKeyboard")
 		@keys = {}
-		@row_size = 12
+		@row_size = 13
 		@keysize = Key.KEYSIZE
 		@onPosted = new Phaser.Signal()
-		for i in [0..70]
-			letter = if i == 69 then '←' else String.fromCharCode(48+i)
-			if i == 69 
-				keycode = 8 
-				letter = '←'
-			else if i==70
-				keycode = 13
-				letter = '√'
-			else
-				keycode = 48+i
-				letter = String.fromCharCode(48+i)
-			key = new Key(game, letter, keycode)
-			@add(key)
+		@key_pad = new Phaser.Group(game)
+		@key_preview = new Phaser.Group(game)
+		KEY_PREVIEW_SIZE = 160
+		for i in [0...KEY_NUM]
+			keycode = i
+			key = new Key(game, keycode)
+			@key_pad.add(key)
 			key.x = (i%@row_size)*(key.keysize+0)
 			key.y = Math.floor(i/@row_size)*(key.keysize+0)
 			@keys[keycode] = key
 			keys = @keys
 			# key.keyOver()
-			key.keyOver (key)->
+			key.keyOver (key) =>
+				bigKey = new Key(game, key.keycode, undefined, KEY_PREVIEW_SIZE)
+				@key_preview.removeAll(true)
+				@key_preview.add(bigKey)
+				# @add(bigKey)
 				for k,v of keys
 					if parseInt(k) != key.keycode
 						v.inputOut()
+			key.keyOut (key) =>
+				for k,v of keys
+					if v.state == Key.States.OVER
+						return
+				@key_preview.removeAll(true)
+
 			key.keyDown (key) =>
-				@handleKey(key)
+				@inputbar.addCh(key)
+
+		backspace = Key.new.BACKSPACE(game)
+		backspace.x = ((KEY_NUM)%@row_size)*(key.keysize+0)
+		backspace.y = Math.floor((KEY_NUM)/@row_size)*(key.keysize+0)
+		backspace.keyDown (key) =>
+			@inputbar.backspace()
+		enter = Key.new.ENTER(game)
+		enter.x = ((KEY_NUM+1)%@row_size)*(key.keysize+0)
+		enter.y = Math.floor((KEY_NUM+1)/@row_size)*(key.keysize+0)
+		enter.keyDown (key) =>
+			@handlePost()
+		@key_pad.add(enter)
+		@key_pad.add(backspace)
+
 
 		@inputbar = new InputBar(game, this)
-
-		@y = game.camera.view.height - (@height + 24);
 		@add(@inputbar)
+		@key_pad.y = @inputbar.height
+		@add(@key_pad)
+
+		@key_preview.x = -KEY_PREVIEW_SIZE-5
+		@add(@key_preview)
+		@y = game.camera.view.height - (@height + 24);
 		@alpha = 0.95
 
 	hide: ->
 		@visible = false
 
 	handleKey: (key)->
-		# alert keycode
 		switch key.keycode
-			when 8
+			when Key.new.BACKSPACE_CODE
 				@inputbar.backspace()
-			when 13
+			when Key.new.ENTER_CODE
 				@handlePost()
 			else
 				@inputbar.addCh(key)

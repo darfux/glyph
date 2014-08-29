@@ -2,19 +2,31 @@
 #-import glyph.game.lib.SoftKeyboard
 class Ep0
 
+game = null
 preload = ->
-    @game.load.image('cirno', '<%= asset_path("test.jpg") %>')
-    @game.load.image('bg', '<%= asset_path("fate.jpg") %>')
+    game.load.image('cirno', '<%= image_path("test.jpg") %>')
+    game.load.image('bg', '<%= image_path("fate.jpg") %>')
+    SoftKeyboard.preload(game)
 
 create = ->
-    @game.add.sprite(0, 0, 'bg')
-    img = @game.add.sprite(0, 0, 'cirno')
-    img.x = @game.world.width/2 - img.width/2
+    game.add.sprite(0, 0, 'bg')
+    img = game.add.sprite(0, 0, 'cirno')
+    img.x = game.world.width/2 - img.width/2
     img.y = 48
-    skb = new SoftKeyboard(@game)
-    @game.world.add(skb)
+    skb = new SoftKeyboard(game)
+    game.world.add(skb)
     Util.setXCenter(skb)
+    # @bmd = game.add.bitmapData(1600, 1600);
+    # @bmd.ctx.beginPath()
+    # @bmd.ctx.rect(0, 0, 1600, 1600)
+    # @bmd.ctx.fillStyle = '#FFFFFF';
+    # @bmd.ctx.fill()
+    # game.add.sprite(0, 0, @bmd)
+    # sp = new Phaser.Sprite(game, 0, 0, 'characters_all')
+    # sp.animations.add('walk')
+    # sp.animations.play('walk', 5, true)
+    # game.world.add(sp)
 
     
 root.init_ep0 = ->
-	@game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'glyph-0', { preload: preload, create: create });
+	game = new Phaser.Game(1280, 720, Phaser.CANVAS, 'glyph-0', { preload: preload, create: create });
