@@ -109,68 +109,71 @@ class Key extends Phaser.Group
 		{keycode: @keycode, letter: @letter}.toString()
 
 class InputBar extends Phaser.Group
+	BACKGROUD_COLOR = '#DDDDEE'
 	constructor: (game, keyboard)->
 		super(game, null, "SoftKeyboard-InputBar")
 		@game = game
-		@cursor_pos = 0
 		@ch_queue = []
-
 		@keysize = keyboard.keysize
 		@row_size = keyboard.row_size
+		@_character_textures = {}
 
-		@bmd = game.add.bitmapData(@row_size*@keysize, @keysize);
-		@bmd.ctx.beginPath()
-		@bmd.ctx.rect(0, 0, @row_size*@keysize, @keysize)
-		@bmd.ctx.fillStyle = '#DDDDEE';
-		@bmd.ctx.fill()
-		sprite = new Phaser.Sprite(game, 0, 0, @bmd)
+		init_background = =>
+			bmd = game.add.bitmapData(@row_size*@keysize, @keysize)
+			bmd.ctx.beginPath()
+			bmd.ctx.rect(0, 0, @row_size*@keysize, @keysize)
+			bmd.ctx.fillStyle = BACKGROUD_COLOR
+			bmd.ctx.fill()
+			@add(new Phaser.Sprite(game, 0, 0, bmd))
 
-		@add(sprite)
+		init_charaters = =>
+			c = game.cache
+			img = game.cache.getImage(Key.CHARACTER_RES);
+			@_characters_bitmapdata = bmd = game.make.bitmapData(img.width, img.height)
+			bmd.draw(img, 0, 0, img.width, img.height)
+			bmd.update()
+			bmd.replaceRGB(0,0,0,255, 70,30,30,255)
+
+
+		init_background()
+		init_charaters()
 
 	addCh: (key)->
 		@ch_queue.push(key)
-		@cursor_pos += 1
 		@update_text()
 
 	backspace: ->
 		return if @ch_queue.length==0
 		@ch_queue.pop()
-		@cursor_pos -= 1
 		@update_text()
-
 
 	update_text: ->
 		tmp = @ch_queue
 		@removeAll()
 		@ch_queue = tmp
 		visible_chs = if @ch_queue.length>@row_size then @ch_queue[-@row_size..-1] else @ch_queue
+		pre_character = null
 		for ch, i in visible_chs
 			keycode = ch.keycode
-			# game.add.sprite(0, 0, bmd);
-			# game.input.onDown.add(recolor, this);
+			if !(texture = @_character_textures[keycode])
+				tmp = new Phaser.Sprite(@game, 0, 0, @_characters_bitmapdata)
+				fd = @game.cache.getFrameData(Key.CHARACTER_RES)
+				tmp.animations.loadFrameData(fd, keycode)
+				tmp.destroy()
 
-			# character.add()
-			bmd = @game.make.bitmapData(160, 160)
-			bmd.draw(new Phaser.Sprite(@game, 0, 0, Key.CHARACTER_RES, keycode), 0, 0, 160, 160)
-			bmd.update()
-			
-			character = new Phaser.Group(@game)
-			character.add(new Phaser.Sprite(@game, 0, 0, bmd))
-			character.height = character.width = @keysize
+				bmd = @game.make.bitmapData(@keysize, @keysize)
+				bmd.draw(tmp, 0, 0, @keysize, @keysize)
+				bmd.update()
+				@_character_textures[keycode] = texture = bmd
+
+			character = new Phaser.Sprite(@game, 0, 0, texture)
 			character.x = i*@keysize
 			@add(character)
-			bmd.replaceRGB(0,0,0,255, 70,30,30,255)
 
 	removeAll: ->
 		if @children.length > 1
 			@removeBetween(1, @children.length-1, true)
 		@ch_queue = []
-
-	createCh: (ch)->
-		style = { font: "#{@keysize}px Arial", fill: "#996699" }
-		text = new Phaser.Text(@game, 14, 5, ch.toString(), style)
-		text.y = -4
-		text
 
 class SoftKeyboard extends Phaser.Group
 	KEY_NUM = 59
