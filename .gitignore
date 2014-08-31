@@ -19,4 +19,4 @@
 /public/assets/*-[0-9a-z]*.*
 
 # Ignore image assets
-/app/assets/images
+# /app/assets/images
