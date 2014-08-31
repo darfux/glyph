@@ -176,10 +176,11 @@ class InputBar extends Phaser.Group
 		@ch_queue = []
 
 class SoftKeyboard extends Phaser.Group
-	KEY_NUM = 59
-
 	@preload: (game)->
 		Key.preload(game)
+
+	KEY_NUM = 59
+	KEY_PREVIEW_SIZE = 160
 
 	constructor: (game)->
 		super(game, null, "SoftKeyboard")
@@ -189,68 +190,64 @@ class SoftKeyboard extends Phaser.Group
 		@onPosted = new Phaser.Signal()
 		@key_pad = new Phaser.Group(game)
 		@key_preview = new Phaser.Group(game)
-		KEY_PREVIEW_SIZE = 160
-		for i in [0...KEY_NUM]
-			keycode = i
-			key = new Key(game, keycode)
-			@key_pad.add(key)
+
+		key_pos = (key, i)=>
 			key.x = (i%@row_size)*(key.keysize+0)
 			key.y = Math.floor(i/@row_size)*(key.keysize+0)
-			@keys[keycode] = key
-			keys = @keys
-			# key.keyOver()
-			key.keyOver = (key) =>
-				bigKey = new Key(game, key.keycode, undefined, KEY_PREVIEW_SIZE)
-				@key_preview.removeAll(true)
-				@key_preview.add(bigKey)
-				# @add(bigKey)
-				for k,v of keys
-					if parseInt(k) != key.keycode
-						v.outHandler()
-			key.keyOut = (key) =>
-				for k,v of keys
-					if v.state == Key.States.OVER
-						return
-				@key_preview.removeAll(true)
 
-			key.keyDown = (key) =>
-				@inputbar.addCh(key)
+		init_normal_key = =>
+			for i in [0...KEY_NUM]
+				keycode = i
+				key = new Key(game, keycode)
+				bigKey = new Key(game, keycode, undefined, KEY_PREVIEW_SIZE)
+				key_pos(key, keycode)
+				@keys[keycode] = {org: key, big: bigKey}
+				key.keyOver = (key) =>
+					@key_preview.removeAll
+					current = @keys[key.keycode].big
+					@key_preview.add(current)
+					for k,v of @keys
+						if parseInt(k) != key.keycode && v.state != Key.States.NORMAL
+							v.org.outHandler()
+				key.keyOut = (key) =>
+					for k,v of @keys
+						if v.org.state == Key.States.OVER
+							return
+					@key_preview.removeAll()
+				key.keyDown = (key) =>
+					@inputbar.addCh(key)
 
-		backspace = Key.new.BACKSPACE(game)
-		backspace.x = ((KEY_NUM)%@row_size)*(key.keysize+0)
-		backspace.y = Math.floor((KEY_NUM)/@row_size)*(key.keysize+0)
-		backspace.keyDown = (key) =>
-			@inputbar.backspace()
-		enter = Key.new.ENTER(game)
-		enter.x = ((KEY_NUM+1)%@row_size)*(key.keysize+0)
-		enter.y = Math.floor((KEY_NUM+1)/@row_size)*(key.keysize+0)
-		enter.keyDown = (key) =>
-			@handlePost()
-		@key_pad.add(enter)
-		@key_pad.add(backspace)
+				@key_pad.add(key)
 
-
-		@inputbar = new InputBar(game, this)
-		@add(@inputbar)
-		@key_pad.y = @inputbar.height
-		@add(@key_pad)
-
-		@key_preview.x = -KEY_PREVIEW_SIZE-5
-		@add(@key_preview)
-		@y = game.camera.view.height - (@height + 24);
-		@alpha = 0.95
-
-	hide: ->
-		@visible = false
-
-	handleKey: (key)->
-		switch key.keycode
-			when Key.new.BACKSPACE_CODE
+		init_function_key = =>
+			backspace = Key.new.BACKSPACE(game)
+			key_pos(backspace, KEY_NUM)
+			backspace.keyDown = (key) =>
 				@inputbar.backspace()
-			when Key.new.ENTER_CODE
+
+			enter = Key.new.ENTER(game)
+			key_pos(enter, KEY_NUM+1)
+			enter.keyDown = (key) =>
 				@handlePost()
-			else
-				@inputbar.addCh(key)
+
+			@key_pad.add(enter)
+			@key_pad.add(backspace)
+
+		init_layout = =>
+			@inputbar = new InputBar(game, this)
+			@add(@inputbar)
+			@key_pad.y = @inputbar.height
+			@add(@key_pad)
+
+			@key_preview.x = -KEY_PREVIEW_SIZE-5
+			@add(@key_preview)
+			@y = game.camera.view.height - (@height + 24);
+			@alpha = 0.95
+			
+		init_normal_key()
+		init_function_key()
+		init_layout()
+
 	handlePost: ->
 		code_ar = []
 		for key in @inputbar.ch_queue
