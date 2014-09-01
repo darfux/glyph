@@ -25,14 +25,14 @@ class Key extends Phaser.Group
 
 	# internal class attributes
 	Colors          = {         
-		NORMAL: '#FFFFFF'
-		OVER:   '#DDDDDD'
-		DOWN:   '#EEEEEE'
+		NORMAL: Phaser.Color.createColor(0xff, 0xff, 0xff)#'#FFFFFF'
+		OVER:   Phaser.Color.createColor(0xdd, 0xdd, 0xdd)#'#DDDDDD'
+		DOWN:   Phaser.Color.createColor(0xee, 0xee, 0xee)#'#EEEEEE'
 	}
 	CHARACTER_RES   = @CHARACTER_RES
 	DEFAULT_SIZE    = @DEFAULT_SIZE
 	States          = @States
-	BACKGROUD_COLOR	= '#FFFFFF'
+	BACKGROUD_COLOR	= Colors.NORMAL
 
 	# public instance methods
 	constructor: (game, keycode, letter, size)->
@@ -49,8 +49,7 @@ class Key extends Phaser.Group
 			bmd.ctx.rect(0, 0, @keysize, @keysize)
 			@background = new Phaser.Sprite(game, 0, 0, bmd)
 			@background.fillColor = (color)->
-				@key.ctx.fillStyle = color
-				@key.ctx.fill()
+				@key.fill(color.r, color.g, color.b)
 			@background.fillColor(BACKGROUD_COLOR)
 			@add(@background)
 
@@ -109,7 +108,7 @@ class Key extends Phaser.Group
 		{keycode: @keycode, letter: @letter}.toString()
 
 class InputBar extends Phaser.Group
-	BACKGROUD_COLOR = '#DDDDEE'
+	BACKGROUD_COLOR = Phaser.Color.createColor(0xdd, 0xdd, 0xee)
 	constructor: (game, keyboard)->
 		super(game, null, "SoftKeyboard-InputBar")
 		@game = game
@@ -120,10 +119,7 @@ class InputBar extends Phaser.Group
 
 		init_background = =>
 			bmd = game.add.bitmapData(@row_size*@keysize, @keysize)
-			bmd.ctx.beginPath()
-			bmd.ctx.rect(0, 0, @row_size*@keysize, @keysize)
-			bmd.ctx.fillStyle = BACKGROUD_COLOR
-			bmd.ctx.fill()
+			bmd.fill(BACKGROUD_COLOR.r, BACKGROUD_COLOR.g, BACKGROUD_COLOR.b)
 			@add(new Phaser.Sprite(game, 0, 0, bmd))
 
 		init_charaters = =>
