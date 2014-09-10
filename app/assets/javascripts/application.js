@@ -13,6 +13,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require phaser
+//= require phaser_blurX
+//= require phaser_blurY
 //= require kickstart
 //= require turbolinks
 //= require coffee_bag

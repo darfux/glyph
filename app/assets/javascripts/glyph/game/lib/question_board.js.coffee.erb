@@ -23,6 +23,10 @@ class ImgShow extends Phaser.Sprite
 
 
 class QuestionBoard extends Phaser.Group
+
+	@preload: (game)->
+		SoftKeyboard.preload(game)
+
 	constructor: (game)->
 		super(game, null, "QuestionBoard")
 		@tip = new Tip(game, "嗨～遇到一个新事物！")
