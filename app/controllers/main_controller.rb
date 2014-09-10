@@ -6,8 +6,14 @@ class MainController < ApplicationController
     ]
   end
 
+  @@episode_pages = {
+    '0' => { '0' => 'word_recite' }
+    '1' => { }
+  }
+
   def episode
     @episode = params[:ep]
-    render "episode"
+    @paragraph = params[:paragraph]
+    render @@episode_pages[@episode][@paragraph]
   end
 end

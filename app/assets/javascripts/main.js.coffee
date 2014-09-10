@@ -14,7 +14,9 @@ root.main_index_js = ->
 
 root.main_episode_js = ->
 	ep = $('episode').attr('num')
-	init_game(ep)
+	paragraph = $('episode').attr('num')
+	if ep
+		init_game(ep, paragraph)
 	# Util.setXCenter(null)
 
 
