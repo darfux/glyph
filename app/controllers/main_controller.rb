@@ -7,13 +7,22 @@ class MainController < ApplicationController
   end
 
   @@episode_pages = {
-    '0' => { '0' => 'word_recite' }
+    '0' => { '0' => 'word_recite' },
     '1' => { }
   }
 
+  @@word_info = 
+    %w{ 一 二 大 小 男 女 人 鱼 狗 鸟
+        树 叶 根 皮 肉 血 眼 鼻 嘴 牙齿
+        舌 手 脚 骨 卵 角 尾 羽 头 耳
+        肚腹 脖子/领 咬 看，视 ?? 躺 死 游 飞 走 
+        坐 站 太阳 月 星 水 石 沙子 土地 云
+        火 路 山 夜 黑 白 土地？ 这 那
+      }
   def episode
     @episode = params[:ep]
     @paragraph = params[:paragraph]
-    render @@episode_pages[@episode][@paragraph]
+    @word_info = @@word_info
+    render @@episode_pages.direct_fetch([@episode,@paragraph], 'episode')
   end
 end

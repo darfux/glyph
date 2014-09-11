@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery.easing
 //= require phaser
 //= require phaser_blurX
 //= require phaser_blurY

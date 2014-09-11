@@ -1,0 +1,190 @@
+// Place all the styles related to the main controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.glyph-screen{
+  canvas{
+    margin: 0 auto;
+  }
+}
+
+#episode-list{
+  margin-top: 48px;
+}
+.episode-select{
+  width: 480px;
+  height: 180px;
+  background: -webkit-linear-gradient(top, #EEE,#CCC);
+  margin: 0 auto 24px;
+  border: solid 1px #BBB;
+  border-radius: 8px;
+  &:hover{
+    cursor: pointer;
+    background: -webkit-linear-gradient(top, #FFF,#EEE);
+  }
+}
+.episode-description{
+  width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 32px;
+}
+.ep-number{
+  color: #233333;
+  font-size: 30px;
+  line-height: 30px;
+  font-weight: 800;
+}
+
+.ep-title{
+  color: #663333;
+  line-height: 36px;
+  margin-top: 12px;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.ep-brief{
+  margin-top: 12px;
+  font-size: 12px;
+  font-style: italic;
+}
+
+
+// CHARACTER-HELP
+
+#character-panel{
+  border-radius: 10px;
+  // display: inline-block;
+  margin: 0px auto 0;
+  // transform:scale(0.5, 0.5);
+  position: relative;
+  // left: 100px;
+  width: 1600*0.5+20px;  
+  height: 960*0.5+20px;
+  // border: solid 1px gray;
+}
+
+.character{
+  width: 160px;
+  height: 160px;
+  // background-color: gray;
+  background-image: url('<%= image_path("characters_all.png") %>');  
+  background-repeat: no-repeat; /*我们并不想让它平铺*/
+}
+
+.character-key{  
+  transform-origin: 0 0;  
+  transform:scale(0.5, 0.5);  
+  border: solid 1px #233333;
+  &:hover{
+    background-color: #EEE;
+    cursor: pointer;
+  }
+  &:active{
+    background-color: #BBB;
+    cursor: pointer;
+  }
+}
+
+
+@for $i from 0 to 59 {
+  .character-#{$i}{ 
+    background-position: -1*($i%10)*160px -1*floor($i/10)*160px;
+  }
+  .character-key.character-#{$i}{
+    display: inline-block;
+    position: absolute;
+    left: ($i%10)*80+16px;
+    top: floor($i/10)*80+16px;
+  }
+}
+
+#character-info{
+  margin: 0 auto;
+  width: 320px;
+  height: 320px;
+  .character{
+    display: inline-table;
+    margin-left: -100px;
+    transform-origin: 0 0;  
+    transform:scale(2, 2);
+  }
+  .character-empty{
+    background-image: none;
+  }
+  #character-meaning{
+    display: inline-block;
+    width: 240px;
+    // width: 100%;
+    height: 96px;
+    text-align: center;
+    line-height: 96px;
+    font-size: 64px;
+    margin-top: -10px;
+    margin-left: 320px;
+    border: dashed 3px #999;
+    border-radius: 5px;
+  }
+}
+
+#paragraph-0-section-0{
+  h1{
+    margin-top: 0;
+    padding-top: 160px;
+    font-size: 64px;
+  }
+  .description{
+    margin-top: 120px;
+    font-size: 32px;
+  }
+  margin: 0;
+  width: 100%;
+  height: 1280px;
+  background-color: gray;
+  color: white;
+  text-align: center;
+}
+
+#paragraph-0-section-1{
+  height: 1280px;
+}
+
+#nav-point{
+  position: fixed;
+  right: 5%;
+  top: 40%;
+  div{
+    width: 32px;
+    height: 32px;
+    border-radius: 32px;
+    background-color: #AAA;
+    &:hover{
+      cursor: pointer;
+    }
+  }
+  div + div{
+    margin-top: 64px;
+  }
+  .nav-active{
+    background-color: black;
+  }
+}
+
+#paragraph-0-section-2{
+  height: 1280px; 
+  background-color: #069;
+  text-align: center;
+  .description{
+    padding-top: 360px;
+    font-size: 48px;
+    font-weight: 600;
+    color: #BBB;
+  }
+  button{
+    margin-top: 96px;
+    font-size: 32px;
+  }
+}
+// #character-0{ 
+//   background-position: 0px 160px;
+// }
