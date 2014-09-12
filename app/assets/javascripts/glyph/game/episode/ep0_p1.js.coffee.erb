@@ -5,104 +5,119 @@
 
 class Ep0P1
 
-game = null
+game = mask = blur = bg = startbtn = null
+
+init_result_table = (result)->
+	rate = 0
+	for k,v of result
+		if v == 0
+			rate += 1
+			continue
+		$("#result-#{k}").html("<span class='wrong'>#{v}</span>")
+	rate = rate/result.length
+	$('#result-rate').html("#{rate*100}%")
+	$('#pre-result').hide()
+	$('#result-show').show()
+
 preload = ->
-    game.load.image('cirno', '<%= image_path("test.jpg") %>')
-    # game.load.image('bg', '<%= image_path("fate.jpg") %>')
-    game.load.image('bg', '<%= image_path("map-1.jpg") %>')
-    # game.load.script('filterX', '../filters/BlurX.js');
-    SoftKeyboard.preload(game)
-    CharacterInfoBox.preload(game)
-    StatePanel.preload(game)
+	game.load.image('cirno', '<%= image_path("test.jpg") %>')
+	game.load.image('bg', '<%= image_path("map-1.jpg") %>')
+	SoftKeyboard.preload(game)
+	CharacterInfoBox.preload(game)
+	StatePanel.preload(game)
+
+pre_create = ->
+	$('#game-start').click ->
+		$(this).hide()
+		create()
 
 create = ->
-    cib = sp = null
-    init_background = ->
-        bg = game.add.sprite(0, 0, 'bg')
-        bg.width = game.world.width
-        bg.height = game.world.height
-        blurX = game.add.filter('BlurX')
-        blurY = game.add.filter('BlurY')
-        blurX.blur = blurY.blur = 40
-        bg.filters = [ blurX, blurY ]
+	cib = sp = null
+	init_background = ->
+		bg = game.add.sprite(0, 0, 'bg')
+		bg.width = game.world.width
+		bg.height = game.world.height
+		blurX = game.add.filter('BlurX')
+		blurY = game.add.filter('BlurY')
+		blurX.blur = blurY.blur = 10
+		blur = [ blurX, blurY ]
+		bg.filters = [ blurX, blurY ]
 
-    init_infoshow = ->
-        cib = new CharacterInfoBox(game)
-        game.world.add(cib)
-        Util.setXCenter(cib)
-        cib.y = 64
-        sp = new StatePanel(game)
-        game.world.add(sp)
-        # img = game.add.sprite(0, 0, 'cirno')
-        # img.x = game.world.width/2 - img.width/2
-        # img.y = 48
-    init_timer = ->
-        # timer = game.time.create(true);
-        # timer = new Phaser.Timer(game)
-        # timer.loop(1000, ->
-        #     console.log(1)
-        #     return true
-        # ,this
-        # )
-        # timer.start()
-        # timer = new Phaser.Timer(game)
-        # timer
-        # timer.start()
-        # console.log 1
+	init_infoshow = ->
+		cib = new CharacterInfoBox(game)
+		game.world.add(cib)
+		Util.setXCenter(cib)
+		cib.y = 64
+		sp = new StatePanel(game)
+		game.world.add(sp)
+		Util.setXCenter(sp)
+		sp.y = cib.y+cib.height+24
 
 
+	init_background()
+	init_infoshow()
 
-    init_background()
-    init_infoshow()
-    init_timer()
+	test_param = $.query.get('test')
+	ch_num = test_param || 58
 
-    ar = shuffle_array([0..1])
-    cib.setCode(ar.shift())
+	result = new Array(ch_num)
+	for i in [0..ch_num]
+		result[i] = 0
 
-    skb = new SoftKeyboard(game, 75)
-    game.world.add(skb)
-    Util.setXCenter(skb)
-    skb.onInputed.add((key)->
-        current_code = cib.word_code
-        if current_code != key.keycode
-            ar.push(cib.word_code)
-            sp.showWrong()
-        else
-            sp.showRight()
-        if ar.length
-            skb.disable()
-            timer = game.time.create(true)
-            timer.repeat(350, 6, ->
-                if cib.word_code==-1
-                    cib.setCode(current_code)
-                else
-                    cib.setCode(-1)    
-            )
-            timer.onComplete.add(->
-                cib.setCode(ar.shift())
-                sp.reset()
-                skb.enable()
-            )
-            timer.start(1000)
-        else
-            timer = game.time.create(true)
-            timer.add(1000, ->
-                $('#glyph-0-1').hide()
-            )
-            timer.start()
-    )
-    # @bmd = game.add.bitmapData(1600, 1600);
-    # @bmd.ctx.beginPath()
-    # @bmd.ctx.rect(0, 0, 1600, 1600)
-    # @bmd.ctx.fillStyle = '#FFFFFF';
-    # @bmd.ctx.fill()
-    # game.add.sprite(0, 0, @bmd)
-    # sp = new Phaser.Sprite(game, 0, 0, 'characters_all')
-    # sp.animations.add('walk')
-    # sp.animations.play('walk', 5, true)
-    # game.world.add(sp)
+	ar = shuffle_array([0..ch_num])
+	cib.setCode(ar.shift())
 
-    
+	skb = new SoftKeyboard(game, 75)
+	game.world.add(skb)
+	Util.setXCenter(skb)
+	skb.onInputed.add((key)->
+		current_code = cib.character_code
+		if current_code != key.keycode
+			ar.push(current_code) if ar[-1..][0] != current_code
+			result[current_code] += 1
+			sp.showWrong()
+			timer = game.time.create(true)
+			timer.add(500, ->
+				sp.reset()
+			)
+			timer.start()
+		else
+			sp.showRight()
+			if ar.length
+				skb.disable()
+				timer = game.time.create(true)
+				timer.repeat(250, 6, ->
+					if cib.character_code == -1
+						cib.setCode(current_code)
+					else
+						cib.setCode(-1)
+				)
+				timer.onComplete.add(->
+					cib.setCode(ar.shift())
+					sp.reset()
+					skb.enable()
+				)
+				timer.start(1000)
+			else
+				timer = game.time.create(true)
+				timer.add(1000, ->
+					blur[0].blur = blur[1].blur = 20
+					game.world.filters = blur
+					mask.show()
+					init_result_table(result)
+				)
+				timer.add(2000, ->
+					$('#nav-point').children()[2].click()
+				)
+				timer.onComplete.add(->
+					# game.destroy()
+				)
+				timer.start()
+	)
+
+	
 root.init_ep0 = ->
-    game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-0-1', { preload: preload, create: create })
-    @game = game
+	game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-0-1', { preload: preload, create: pre_create })
+	(mask = $('#paragraph-1-section-1').children('.mask')).css('height', $(window).height()) 
+	startbtn = $('#game-start')
+	startbtn.css('left', $(window).width()/2-startbtn.width()/2)

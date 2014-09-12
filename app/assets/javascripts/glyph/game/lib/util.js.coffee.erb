@@ -1,6 +1,25 @@
 class Util
 	@setXCenter = (displayObject, container)->
 		if container != undefined
+			return false if container.getInedx(displayObject) == -1
 			displayObject.x = container.width/2 - displayObject.width/2
-		else if displayObject.parent
-			displayObject.x = displayObject.parent.width/2 - displayObject.width/2
+		else if p = displayObject.parent
+			index = p.getIndex(displayObject)
+			p.remove(displayObject)
+			displayObject.x = p.width/2 - displayObject.width/2
+			p.add(displayObject)
+			p.addAt(displayObject, index)
+
+	@setYCenter = (displayObject, container)->
+		if container != undefined
+			return false if container.getInedx(displayObject) == -1
+			displayObject.y = container.height/2 - displayObject.height/2
+		else if p = displayObject.parent
+			index = p.getIndex(displayObject)
+			p.remove(displayObject)
+			displayObject.y = p.height/2 - displayObject.height/2
+			p.addAt(displayObject, index)
+
+	@setCenter = (displayObject, container)->
+		@setXCenter(displayObject, container)
+		@setYCenter(displayObject, container)

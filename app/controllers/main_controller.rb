@@ -7,11 +7,11 @@ class MainController < ApplicationController
   end
 
   @@episode_pages = {
-    '0' => { '0' => 'word_recite' },
+    '0' => { '0' => 'character_recite', '1' => 'character_preview' },
     '1' => { }
   }
 
-  @@word_info = 
+  @@character_info = 
     %w{ 一 二 大 小 男 女 人 鱼 狗 鸟
         树 叶 根 皮 肉 血 眼 鼻 嘴 牙齿
         舌 手 脚 骨 卵 角 尾 羽 头 耳
@@ -22,13 +22,13 @@ class MainController < ApplicationController
   def episode
     @episode = params[:ep]
     @paragraph = params[:paragraph]
-    @word_info = @@word_info
+    @character_info = @@character_info
     render @@episode_pages.direct_fetch([@episode,@paragraph], 'episode')
   end
 
-  def word_info
+  def character_info
     respond_to do |format|
-      format.json { render json: @@word_info }
+      format.json { render json: @@character_info }
     end
   end
 end

@@ -1,0 +1,63 @@
+<episode num="<%= @episode %>"></episode>
+<paragraph num="<%= @paragraph %>"></paragraph>
+<div id='episode-<%= @episode %>'>
+  <div id='nav-point'>
+    <div href="#paragraph-1-section-0"></div>
+    <div href="#paragraph-1-section-1"></div>
+    <div href="#paragraph-1-section-2"></div>
+  </div>
+  <div id="paragraph-1-section-0">
+    <h1>文字考查</h1>
+    <div class='description'>
+      在下方的游戏中 <br>
+      从字盘上选择与给出意义相符的文字
+    </div>
+  </div>
+  <div id="paragraph-1-section-1">
+    <div class='mask'>
+      <div id='gameover'>游戏结束</div>
+    </div>
+    <div id="game-start"><button>开始</button></div>
+    <div id="glyph-<%= @episode %>-<%= @paragraph %>" class = 'glyph-screen'>
+    </div>
+  </div>
+  <div id="paragraph-1-section-2">
+    <div id="pre-result">
+      请先完成上方考查
+    </div>
+    <div id="result-show">
+      <div class='description'>
+        考查结果
+      </div>
+      <div>
+        <h6>正确率:</h6> <span id='result-rate'></span>
+      </div>
+      <div id="result-table">
+        <h6>错误统计</h6>
+        <% for i in 0..5 do %>
+          <table>
+            <tr>
+              <% for j in 0..10 do%>
+                <% if i==5&&j==10 %>
+                <th>---</th>
+                <% else %>
+                <th><%= (j+i*10).to_s.rjust(2, '0') %></th>
+                <% end %>
+              <% end %>
+            </tr>
+            <tr>
+              <% for j in 0..10 do%>
+                <% if i==5&&j==10 %>
+                <th>---</th>
+                <% else %>
+                <td id="result-<%= j+i*10 %>">0</td>
+                <% end %>
+              <% end %>
+            </tr>
+          </table>
+        <% end %>
+      </div>
+    </div>
+
+  </div>
+</div>

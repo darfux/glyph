@@ -60,10 +60,8 @@ handle_ep0_p0 = ->
 	init_character_panel()
 
 
-
-
-
 handle_ep0_p1 = ->
+	init_nav_point()
 	init_game(0, 1)
 
 

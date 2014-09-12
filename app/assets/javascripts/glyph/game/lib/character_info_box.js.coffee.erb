@@ -1,21 +1,23 @@
 <% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
 class CharacterInfoBox extends Phaser.Group
 	@preload: (game)->
-		game.load.image("character_info_box_bg", '<%= image_path("character_info_box_bg.jpg") %>')
-		game.load.json("word_info", '<%= game_word_info_path %>')
+		game.load.image("character_info_box_bg", '<%= image_path("character_info_box_bg.png") %>')
+		game.load.json("character_info", '<%= game_character_info_path %>')
 	constructor: (game) ->
 		super(game, null, "CharacterInfoBox")
 
-		@word_code = null
-		@word_info = game.cache.getJSON('word_info')
-		
-		@add(new Phaser.Sprite(game, 0, 0, "character_info_box_bg"))
+		@character_code = null
+		@character_info = game.cache.getJSON('character_info')
+		bg = new Phaser.Sprite(game, 0, 0, "character_info_box_bg")
+		bg.scale.setTo(1.5, 1)
+		@add(bg)
 
-		# console.log @word_info[0]
-		@content = new Phaser.Text(game, 0, 0, '', {font: 'bold 96pt Monospace'})
+		# console.log @character_info[0]
+		@content = new Phaser.Text(game, 0, 0, '', {font: 'bold 120pt Monospace'})
 		@add(@content)
 		# ...
 	
 	setCode: (index)->
-		@word_code = index
-		@content.text = if index==-1 then '' else @word_info[index]
+		@character_code = index
+		@content.text = if index==-1 then '' else @character_info[index]
+		Util.setCenter(@content)
