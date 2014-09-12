@@ -9,8 +9,10 @@ init_list = ->
 			ep_url = that.attr('href')
 			window.open(ep_url)
 
-
+pre_scroll_handler = null
 init_nav_point = ->
+	if pre_scroll_handler
+		$(document).unbind('scroll', pre_scroll_handler) 
 	active_point = (p)->
 		$('#nav-point').children('div').each ->
 			$(this).removeClass('nav-active')
@@ -40,10 +42,12 @@ init_nav_point = ->
 	judge_active()
 	active_point($($('#nav-point').children('div')[0])) unless location.hash
 
-	$(window).scroll ->
+	pre_scroll_handler = ->
 		return true if auto_scrolling
 		judge_active()
 		return true
+
+	$(document).scroll(pre_scroll_handler) 
 
 init_character_panel = ->
 	$('#character-panel').children('.character').each ->
@@ -71,11 +75,7 @@ root.main_index_js = ->
 root.main_episode_js = ->
 	ep = $('episode').attr('num')
 	paragraph = $('paragraph').attr('num')
-	# if ep
-	# 	init_game(ep, paragraph)
-	# else
 	eval("handle_ep#{ep}_p#{paragraph}()")
-	# Util.setXCenter(null)
 
 
 
