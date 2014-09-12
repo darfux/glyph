@@ -1,0 +1,21 @@
+class StatePanel extends Phaser.Group
+	@preload: (game)->
+		game.load.image("state_panel_bg", '<%= image_path("state_panel_bg.png") %>')
+	constructor: (game) ->
+		super(game, null, "StatePanel")
+		@scale.setTo(0.5)
+		bg = new Phaser.Sprite(game, 0, 0, "state_panel_bg")
+		bg.alpha = 0.8
+		@add(bg)
+
+		@content = new Phaser.Text(game, 0, 0, '', {font: 'bold 96pt Monospace', fill: '#EEEEEE'})
+		@add(@content)
+
+	showRight: ->
+		@content.text = '正确'	
+
+	showWrong: ->
+		@content.text = '错误'
+
+	reset: ->
+		@content.text = ''

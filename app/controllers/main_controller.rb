@@ -25,4 +25,10 @@ class MainController < ApplicationController
     @word_info = @@word_info
     render @@episode_pages.direct_fetch([@episode,@paragraph], 'episode')
   end
+
+  def word_info
+    respond_to do |format|
+      format.json { render json: @@word_info }
+    end
+  end
 end

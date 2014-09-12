@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   get 'main/index', as: :game
 
   get 'game/episode/:ep', to: 'main#episode', as: :game_episode
+  get 'game/resource/word_info', to: 'main#word_info', as: :game_word_info
+
   root to: 'user/session#new'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

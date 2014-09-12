@@ -60,6 +60,13 @@ handle_ep0_p0 = ->
 	init_character_panel()
 
 
+
+
+
+handle_ep0_p1 = ->
+	init_game(0, 1)
+
+
 root.main_index_js = ->
 	init_list()
 

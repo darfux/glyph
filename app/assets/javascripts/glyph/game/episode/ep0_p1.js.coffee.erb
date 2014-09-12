@@ -1,0 +1,108 @@
+#-import glyph.game.lib.Util
+#-import glyph.game.lib.SoftKeyboard
+#-import glyph.game.lib.CharacterInfoBox
+#-import glyph.game.lib.StatePanel
+
+class Ep0P1
+
+game = null
+preload = ->
+    game.load.image('cirno', '<%= image_path("test.jpg") %>')
+    # game.load.image('bg', '<%= image_path("fate.jpg") %>')
+    game.load.image('bg', '<%= image_path("map-1.jpg") %>')
+    # game.load.script('filterX', '../filters/BlurX.js');
+    SoftKeyboard.preload(game)
+    CharacterInfoBox.preload(game)
+    StatePanel.preload(game)
+
+create = ->
+    cib = sp = null
+    init_background = ->
+        bg = game.add.sprite(0, 0, 'bg')
+        bg.width = game.world.width
+        bg.height = game.world.height
+        blurX = game.add.filter('BlurX')
+        blurY = game.add.filter('BlurY')
+        blurX.blur = blurY.blur = 40
+        bg.filters = [ blurX, blurY ]
+
+    init_infoshow = ->
+        cib = new CharacterInfoBox(game)
+        game.world.add(cib)
+        Util.setXCenter(cib)
+        cib.y = 64
+        sp = new StatePanel(game)
+        game.world.add(sp)
+        # img = game.add.sprite(0, 0, 'cirno')
+        # img.x = game.world.width/2 - img.width/2
+        # img.y = 48
+    init_timer = ->
+        # timer = game.time.create(true);
+        # timer = new Phaser.Timer(game)
+        # timer.loop(1000, ->
+        #     console.log(1)
+        #     return true
+        # ,this
+        # )
+        # timer.start()
+        # timer = new Phaser.Timer(game)
+        # timer
+        # timer.start()
+        # console.log 1
+
+
+
+    init_background()
+    init_infoshow()
+    init_timer()
+
+    ar = shuffle_array([0..1])
+    cib.setCode(ar.shift())
+
+    skb = new SoftKeyboard(game, 75)
+    game.world.add(skb)
+    Util.setXCenter(skb)
+    skb.onInputed.add((key)->
+        current_code = cib.word_code
+        if current_code != key.keycode
+            ar.push(cib.word_code)
+            sp.showWrong()
+        else
+            sp.showRight()
+        if ar.length
+            skb.disable()
+            timer = game.time.create(true)
+            timer.repeat(350, 6, ->
+                if cib.word_code==-1
+                    cib.setCode(current_code)
+                else
+                    cib.setCode(-1)    
+            )
+            timer.onComplete.add(->
+                cib.setCode(ar.shift())
+                sp.reset()
+                skb.enable()
+            )
+            timer.start(1000)
+        else
+            timer = game.time.create(true)
+            timer.add(1000, ->
+                $('#glyph-0-1').hide()
+            )
+            timer.start()
+    )
+    # @bmd = game.add.bitmapData(1600, 1600);
+    # @bmd.ctx.beginPath()
+    # @bmd.ctx.rect(0, 0, 1600, 1600)
+    # @bmd.ctx.fillStyle = '#FFFFFF';
+    # @bmd.ctx.fill()
+    # game.add.sprite(0, 0, @bmd)
+    # sp = new Phaser.Sprite(game, 0, 0, 'characters_all')
+    # sp.animations.add('walk')
+    # sp.animations.play('walk', 5, true)
+    # game.world.add(sp)
+
+    
+root.init_ep0 = ->
+    game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-0-1', { preload: preload, create: create })
+    @game = game

@@ -1,0 +1,21 @@
+<% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
+class CharacterInfoBox extends Phaser.Group
+	@preload: (game)->
+		game.load.image("character_info_box_bg", '<%= image_path("character_info_box_bg.jpg") %>')
+		game.load.json("word_info", '<%= game_word_info_path %>')
+	constructor: (game) ->
+		super(game, null, "CharacterInfoBox")
+
+		@word_code = null
+		@word_info = game.cache.getJSON('word_info')
+		
+		@add(new Phaser.Sprite(game, 0, 0, "character_info_box_bg"))
+
+		# console.log @word_info[0]
+		@content = new Phaser.Text(game, 0, 0, '', {font: 'bold 96pt Monospace'})
+		@add(@content)
+		# ...
+	
+	setCode: (index)->
+		@word_code = index
+		@content.text = if index==-1 then '' else @word_info[index]
