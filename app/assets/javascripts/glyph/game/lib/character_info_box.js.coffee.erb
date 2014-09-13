@@ -2,7 +2,7 @@
 class CharacterInfoBox extends Phaser.Group
 	@preload: (game)->
 		game.load.image("character_info_box_bg", '<%= image_path("character_info_box_bg.png") %>')
-		game.load.json("character_info", '<%= game_character_info_path %>')
+		game.load.json("character_info", "<%= game_character_info_path(format: :json) %>")
 	constructor: (game) ->
 		super(game, null, "CharacterInfoBox")
 
