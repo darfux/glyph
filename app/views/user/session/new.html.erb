@@ -1,13 +1,26 @@
+<div id="liter-logo"><img src="<%= image_path('liter-logo.png') %>"></div>
+<div id="return-database">返回数据库</div>
 <div id="player-login">
   <%= form_for @session do |f|%>
     <div class="field">
-      <%= f.label :account %><br>
-      <%= f.text_field :account %>
+      <%= f.text_field :account, placeholder: t('user.session.new.account') %>
     </div>
     <div class="field">
-      <%= f.label :password %><br>
-      <%= f.text_field :password %>
+      <%= f.text_field :password, placeholder: t('user.session.new.password') %>
     </div>
-    <%= f.submit nil, :id => "submit", :name => "submit", :class => "form_submit", data: { disable_with: tf(:processing) } %>
+    <div id="register-link">
+      <%= link_to "点击这里进行注册", "javascript:void(0);" %>
+    </div>
+    <div class="submit-field">
+      <%= f.submit nil, :id => "submit", :name => "submit", :class => "form_submit", data: { disable_with: tf(:processing) } %>
+    </div>
   <% end -%>
+</div>
+<div id="login-title"><img src="<%= image_path('login/login-title.png') %>"></div>
+<!-- <div id="login-dialog"><img src="<%= image_path('login/login-dialog-0.png') %>"></div> -->
+<div id='login-background'>
+</div>
+<div id='copy-right'>
+  南开大学文学实验教学中心版权所有 <br>
+  Copyright 2014 © Nankai University the Experimental Teaching Center for Arts. All rights reserved.
 </div>

@@ -6,50 +6,31 @@
     margin: 0 auto;
   }
 }
-
-#episode-list{
-  margin-top: 48px;
+#main-header{
+  height: 100px;
+  background-image: url("<%= image_path('background-qmsht.png') %>");
 }
-.episode-select{
-  width: 480px;
-  height: 180px;
-  background: -webkit-linear-gradient(top, #EEE,#CCC);
-  margin: 0 auto 24px;
-  border: solid 1px #BBB;
-  border-radius: 8px;
-  &:hover{
-    cursor: pointer;
-    background: -webkit-linear-gradient(top, #FFF,#EEE);
-  }
+#main-menu-header{
+  width: 120px;
+  height: 60px;
+  margin-top: -10px;
+  background-color: brown;
+  position: absolute;
+  left: 10%;
 }
-.episode-description{
-  width: 400px;
-  margin: 0 auto;
-  text-align: center;
-  padding-top: 32px;
+#main-menu{
+  width: 120px;
+  height: 360px;
+  position: absolute;
+  margin-top: 55px;
+  left: 10%;
+  background-color: white;
 }
-.ep-number{
-  color: #233333;
-  font-size: 30px;
-  line-height: 30px;
-  font-weight: 800;
+#main-background{
+  background-color: gray;
+  height: 960px;
+  width: 100%;
 }
-
-.ep-title{
-  color: #663333;
-  line-height: 36px;
-  margin-top: 12px;
-  font-size: 36px;
-  font-weight: 800;
-}
-
-.ep-brief{
-  margin-top: 12px;
-  font-size: 12px;
-  font-style: italic;
-}
-
-
 // CHARACTER-HELP
 #character-panel{
   border-radius: 10px;

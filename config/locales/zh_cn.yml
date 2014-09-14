@@ -55,7 +55,7 @@ zh_cn:
   user:
     session:
       new:
-        account: 账号
+        account: 用户名
         password: 密码
 
   #HELPERS
@@ -66,4 +66,4 @@ zh_cn:
         password: 密码
     submit:
       user_session:
-        create: 登录
+        create: 登  录
