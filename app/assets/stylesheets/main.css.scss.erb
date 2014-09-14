@@ -7,30 +7,131 @@
   }
 }
 #main-header{
-  height: 100px;
-  background-image: url("<%= image_path('background-qmsht.png') %>");
+  height: 130px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-image: url("<%= image_path('main/header.jpg') %>");
 }
+
+#content{
+  width: 1080px;
+  margin: 0 auto;
+}
+$menu-width: 140px;
+$menu-left: 30px;
+
+#menu{
+  width: 140px;
+  position: relative;
+  left: $menu-left;
+  // left: $menu-left;
+}
+
 #main-menu-header{
-  width: 120px;
+  width: $menu-width;
   height: 60px;
   margin-top: -10px;
-  background-color: brown;
+  background-image: url("<%= image_path('main/menu-header-background.png') %>"); ;
+  text-align: center;
+  line-height: 2.5em;
+  color: #EEE;
+  font-size: 24px;
+  font-weight: 300;
+  font-family: '微软雅黑', 'msyh';
+}
+
+$tree-color: #DDD;
+$tree-header-size: 20px;
+$tree-margin-top: 10px;
+.tree-base-header{
+  $size: $tree-header-size;
+  width: $size;
+  height: $size;
+  border-radius: $size;
+  border: solid 4px $tree-color;
+}
+
+$tree-body-padding-top: 15px;
+$tree-body-padding-bottom: $tree-body-padding-top*2;
+.tree-base-body{
+  margin: -2px auto;
+  padding-top: $tree-body-padding-top;
+  padding-bottom: $tree-body-padding-bottom;
+  width: 4px;
+  background-color: $tree-color;
+  text-align: center;
+}
+
+.tree-select:nth-child(1){
+  margin-top: 15px;
+}
+
+$tree-select-size: 12px;
+.tree-select{
+  $size: $tree-select-size;
+  margin-left: ($size/2 - 2px)*-1;
+  & + &{
+    margin-top: 40px;
+  }
+  width: $size;
+  height: $size;
+  background-color: $tree-color;
+  border-radius: $size;
+  &.active{
+    background-color: darken($tree-color, 30%);
+  }
+}
+
+#select-titles{
   position: absolute;
-  left: 10%;
+  top: $tree-margin-top + $tree-body-padding-top*2 + $tree-header-size - 6px;
+  left: 45px;
+}
+
+.select-title{
+  font-size: 18px;
+  margin-bottom: 31px - (16px - $tree-select-size);
+  font-family: '微软雅黑', msyh;
+  color: darken($tree-color, 20%);
+  &.active{
+    color: #80CFCB;
+    font-weight: 700;
+  }
+}
+
+
+#menu-tree{
+  margin-top: $tree-margin-top;
+  margin-left: 10px;
+  width: $tree-header-size;
+  text-align: center;
 }
 #main-menu{
-  width: 120px;
-  height: 360px;
+  width: $menu-width;
+  height: 380px;
   position: absolute;
-  margin-top: 55px;
-  left: 10%;
+  margin-top: 5px;
+  // left: $menu-left;
   background-color: white;
 }
 #main-background{
-  background-color: gray;
+  position: absolute;
+  background-color: #CCC;
   height: 960px;
   width: 100%;
+  z-index: -1;
 }
+
+#main-nav{
+  margin: -60px auto;
+  width: 720px;
+  height: 32px;
+  background-color: white;
+}
+
+
+
+
 // CHARACTER-HELP
 #character-panel{
   border-radius: 10px;
