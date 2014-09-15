@@ -1,8 +1,12 @@
 class MainController < ApplicationController
   def index
-    @episodes = [
-      %w{第零章 字符之始 新世界的大门已经打开！},
-      %w{第一章 字符之用 新世界渴望你来引导！}
+    @experiments = [
+      {index: '实验六', name: '普洛普理论验证', progress: 1, path: nil},
+      {index: '实验五', name: '拟境实验', progress: 1, path: nil},
+      {index: '实验四', name: '明象实验', progress: 1, path: nil},
+      {index: '实验三', name: '辨义实验', progress: 2, path: nil},
+      {index: '实验二', name: '审音实验', progress: 3, path: nil},
+      {index: '实验一', name: '实验工具应用实验', progress: 3, path: game_episode_path(0, paragraph: 0)}
     ]
   end
 

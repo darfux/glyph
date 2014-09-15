@@ -1,7 +1,10 @@
 <%#image_tag 'test.jpg' %>
 <!-- <div id="phaser-example">
 </div> -->
+<div id="main-logo"><img src="<%= image_path('main/logo.png') %>"></div>
+<div id="main-title"><img src="<%= image_path('main/title.png') %>"></div>
 <div id="main-header"></div>
+<div id="main-header-decor"><img src="<%= image_path('main/header-decor.png') %>"></div>
 <div id="main-background"></div>
 <div id="content">
   <div id="menu">
@@ -35,18 +38,19 @@
     </div>
 
     <div id="experiment-container">
-
+      <div id="new-experiment"><i class="icon-plus"></i>新建实验</div>
       <div id="experiment-list-container">
-      
-      <% for i in 1..6 do  %>
+
+      <% @experiments.each do |e| %>
         <div class="experiment-cell">
-          <div class="experiment-cell-title">实验六</div>
+          
+          <div class="experiment-cell-title"><%= link_to e[:index] , e[:path], target: '_blank' %></div>
           <div class="experiment-cell-detail">
-            <span class="experiment-cell-detail-name">普洛普理论验证</span>
+            <span class="experiment-cell-detail-name"><%= e[:name] %></span>
             <span class="experiment-cell-progressbar">
               <div class="experiment-cell-progressbar-body">
                 <%# http://demo.doyoe.com/css/inline-block-space/ %>
-                <div class="experiment-cell-progressbar-circle active">1</div><div class="experiment-cell-progressbar-circle">2</div><div class="experiment-cell-progressbar-circle">3</div>
+                <% for i in 0..2 do %><div class="experiment-cell-progressbar-circle<%= ' active' if i<=e[:progress] %>"><%= i+1 %></div><% end %>
               </div>
               <div class="experiment-cell-progressbar-step">待实验</div>
               <div class="experiment-cell-progressbar-step">进行中</div>
@@ -56,10 +60,23 @@
             <span class="experiment-cell-date"><%= l Date.today %></span>
             <span class="experiment-cell-remove"><i class="icon-remove"></i></span>
           </div>
+          <span class="result-button">结果查询</span>
         </div>
       <% end %>
 
       </div>
+
+      <div id="experiment-paginate">
+        <span class="page-nav pre"><i class="icon-double-angle-left"></i></span>
+        <% for i in 1..5 do %>
+        <div class="page-num<%= ' active' if i==4 %>"><%= i %></div>
+        <% end %>
+        <span class="page-nav next"><i class="icon-double-angle-right"></i></span>
+      </div>
     </div>
   </div>
+</div>
+<div id='copy-right' class="main">
+  南开大学文学实验教学中心版权所有 <br>
+  Copyright 2014 © Nankai University the Experimental Teaching Center for Arts. All rights reserved.
 </div>
