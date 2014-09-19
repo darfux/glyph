@@ -428,8 +428,14 @@ $progressbar-body-width: 160px;
 }
 
 .character-key{  
-  transform-origin: 0 0;  
-  transform:scale(0.5, 0.5);  
+  transform-origin: 0 0;
+  transform:scale(0.5, 0.5);
+  -o-transform: 0 0;
+  -o-transform:scale(0.5, 0.5);
+  -webkit-transform: 0 0;
+  -webkit-transform:scale(0.5, 0.5);
+  -ms-transform: 0 0;
+  -ms-transform:scale(0.5, 0.5);
   border: solid 1px #233333;
   &:hover{
     background-color: #EEE;
