@@ -1,0 +1,16 @@
+#-import glyph.game.lib.Util
+#-import glyph.game.lib.SoftKeyboard
+#-import glyph.game.lib.CharacterInfoBox
+#-import glyph.game.lib.StatePanel
+
+class Ep2P0
+
+game = mask = blur = bg = startbtn = null
+
+root.init_ep2_p0 = ->
+	game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-2-0', { preload: preload, create: create })
+
+preload = ->
+
+create = ->
+

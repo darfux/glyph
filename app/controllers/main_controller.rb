@@ -12,7 +12,7 @@ class MainController < ApplicationController
 
   @@episode_pages = {
     '0' => { '0' => 'character_recite', '1' => 'character_preview' },
-    '1' => { '0' => 'recognize_item.erb' }
+    '1' => { '0' => 'recognize_item' }
   }
 
   @@character_info = 
