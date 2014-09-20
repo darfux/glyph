@@ -184,11 +184,12 @@ class SoftKeyboard extends Phaser.Group
 
 	KEY_NUM = 59
 	KEY_PREVIEW_SIZE = 160
-
-	constructor: (game, size)->
+	DEFAULT_ROW_SIZE = 10
+	constructor: (game, size, rowsize, with_inputbar)->
 		super(game, null, "SoftKeyboard")
+		with_inputbar ||= false
 		@keys = {}
-		@row_size = 10
+		@row_size = rowsize || DEFAULT_ROW_SIZE
 		@keysize = size || Key.DEFAULT_SIZE
 		@onPosted = new Phaser.Signal()
 		@onInputed = new Phaser.Signal()
@@ -253,6 +254,9 @@ class SoftKeyboard extends Phaser.Group
 			
 		init_normal_key()
 		# init_function_key()
+		if with_inputbar
+			init_input_bar()
+			init_function_key()
 		init_layout()
 
 	handleInput: (key)->
@@ -266,9 +270,8 @@ class SoftKeyboard extends Phaser.Group
 		for key in @inputbar.ch_queue
 			code_ar.push(key.keycode)
 		console.log(code_ar)
-		alert(code_ar)
 		@inputbar.removeAll()
-		@onPosted.dispatch(this)
+		@onPosted.dispatch(code_ar)
 
 	disable: ->
 		enable = false

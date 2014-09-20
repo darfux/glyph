@@ -1,0 +1,33 @@
+<episode num="<%= @episode %>"></episode>
+<paragraph num="<%= @paragraph %>"></paragraph>
+<div id='episode-<%= @episode %>'>
+  <div id='nav-point'>
+    <div href="#paragraph-0-section-0"></div>
+    <div href="#paragraph-0-section-1"></div>
+    <div href="#paragraph-0-section-2"></div>
+  </div>
+  <div id="paragraph-0-section-0">
+    <h1>探索与发现</h1>
+    <div class='description'>
+      在地图上进行探索，发现和命名新的事物
+    </div>
+  </div>
+  <div id="paragraph-0-section-1">
+    <div class='mask'>
+      <div id='gameover'>游戏结束</div>
+    </div>
+    <div id="game-start"><button>开始</button></div>
+    <div id="glyph-<%= @episode %>-<%= @paragraph %>" class = 'glyph-screen'>
+    </div>
+  </div>
+  <div id="paragraph-0-section-2">
+    <div id="pre-result">
+      请先完成上方的探索任务
+    </div>
+    <div id="result-show">
+      <div class='description'>
+        恭喜你完成了全部探索
+      </div>
+    </div>
+  </div>
+</div>

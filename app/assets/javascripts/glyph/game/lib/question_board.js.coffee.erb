@@ -8,7 +8,7 @@ class Tip extends Phaser.Group
 		bmd = game.add.bitmapData(@tip_width, @tip_height);
 		bmd.ctx.beginPath()
 		bmd.ctx.rect(0, 0, @tip_width, @tip_height)
-		bmd.ctx.fillStyle = '#FFDDEE';
+		bmd.ctx.fillStyle = '#AABBAA';
 		bmd.ctx.fill()
 		sprite = new Phaser.Sprite(game, 0, 0, bmd)
 
@@ -16,37 +16,84 @@ class Tip extends Phaser.Group
 		@add(text)
 		Util.setXCenter(text)
 
-class ImgShow extends Phaser.Sprite
-	constructor: (game, resource_id)->
-		super(game, 0, 0, 'yyy')
-		@scale.setTo(0.8)
+class ImgShow extends Phaser.Group
+
+	imglist = []
+	@preload: (game)->
+		SoftKeyboard.preload(game)
+		<% 
+			path = Rails.root.to_s + '/app/assets/images/question_board'
+			dir = Dir.new(path)
+			images = []
+			dir.each do |f|
+				next if File.directory?(f)
+				images.push f
+			end
+		%>
+		<% images.each do |img| %>
+		<% key = img.split('.')[0] %>
+		<%= "game.load.image('#{key}', '#{image_path('question_board/'+img)}' )" %>
+		<%= "imglist.push('#{key}')" %>
+		<% end %>
+	
+	constructor: (game)->
+		super(game, null, "QuestionBoard-ImgShow")
+		@imagelist = shuffle_array(imglist)[0..1]
+		console.log @imagelist
+		# @scale.setTo(0.8)
+
+	showRandom: ->
+		return null if @imagelist.length==0
+		img = @imagelist.pop()
+		@removeAll(true)
+		img = new Phaser.Sprite(@game, 0, 0, img)
+		@add(img)
+		img.width = img.height = 256
 
 
 class QuestionBoard extends Phaser.Group
 
 	@preload: (game)->
 		SoftKeyboard.preload(game)
+		ImgShow.preload(game)
 
 	constructor: (game)->
 		super(game, null, "QuestionBoard")
+		bmd = game.add.bitmapData(game.world.width, game.world.height);
+		bmd.ctx.beginPath()
+		bmd.ctx.rect(0, 0, game.world.width, game.world.height)
+		bmd.ctx.fillStyle = '#CCCCCC';
+		bmd.ctx.fill()
+		background = new Phaser.Sprite(game, 0, 0, bmd)
+		background.alpha = 0.5
+		@add(background)
+
 		@tip = new Tip(game, "嗨～遇到一个新事物！")
 		@onComplete = new Phaser.Signal()
 		@add(@tip)
 		@img = new ImgShow(game)
 		@add(@img)
 		@img.y = @tip.y+@tip.height+30;
-		kbs = new SoftKeyboard(game)
-		@add(kbs)
-		Util.setXCenter(kbs)
-		Util.setXCenter(@img)
+
+		@kbs = new SoftKeyboard(game, undefined, 13, true)
+		@add(@kbs)
+		@kbs.disable()
 		Util.setXCenter(@tip)
-		kbs.onPosted.add =>
-			@keyBoardPosted()
+		Util.setXCenter(@kbs)
+
+		@kbs.onPosted.add(@keyBoardPosted)
 
 	popup: ->
 		@alpha = 0
+		@kbs.enable()
+		@img.showRandom()
+		Util.setXCenter(@img)
 		@game.add.tween(this).to({ alpha: 1 }, 1500, Phaser.Easing.Quadratic.InOut, true, 0);
 
-	keyBoardPosted: ->
-		@onComplete.dispatch(this)
+	keyBoardPosted: (post_ar)=>
+		alert('提交完成！')
+		@kbs.disable()
+		@onComplete.dispatch(post_ar)
 
+	empty: =>
+		@img.imagelist.length==0

@@ -1,0 +1,31 @@
+class CompassDirection
+	@NW		= "NW"
+	@N		= "N"
+	@NE		= "NE"
+	@E		= "E"
+	@SE		= "SE"
+	@S		= "S"
+	@SW		= "SW"
+	@W		= "W"
+	@CENTER = "Center"
+	
+class Player extends Phaser.Group
+
+	@preload: (game)->
+		game.load.spritesheet('player_walktile','<%= asset_path("boy.png") %>', 675/8, 686/8)
+
+	constructor: (game)->
+		super(game, null, "Player")
+		player = new Phaser.Sprite(0, 0, 'player_walktile')
+		WALK_FRAME = 12
+		player.animations.add('walk_s', [0..7], WALK_FRAME, true)
+		player.animations.add('walk_w', [8..15], WALK_FRAME, true)
+		player.animations.add('walk_e', [16..23], WALK_FRAME, true)
+		player.animations.add('walk_n', [24..31], WALK_FRAME, true)
+		player.animations.add('walk_sw', [32..39], WALK_FRAME, true)
+		player.animations.add('walk_se', [40..47], WALK_FRAME, true)
+		player.animations.add('walk_nw', [48..55], WALK_FRAME, true)
+		player.animations.add('walk_ne', [56..63], WALK_FRAME, true)
+		player.animations.stop('walk_s', true)
+		player.anchor.set(0.5);
+	

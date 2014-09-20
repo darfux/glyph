@@ -5,14 +5,14 @@ class MainController < ApplicationController
       {index: '实验五', name: '拟境实验', progress: 1, path: nil},
       {index: '实验四', name: '明象实验', progress: 1, path: nil},
       {index: '实验三', name: '辨义实验', progress: 2, path: nil},
-      {index: '实验二', name: '审音实验', progress: 3, path: nil},
+      {index: '实验二', name: '审音实验', progress: 3, path: nil, path: game_episode_path(1, paragraph: 0)},
       {index: '实验一', name: '实验工具应用实验', progress: 3, path: game_episode_path(0, paragraph: 0)}
     ]
   end
 
   @@episode_pages = {
     '0' => { '0' => 'character_recite', '1' => 'character_preview' },
-    '1' => { }
+    '1' => { '0' => 'recognize_item.erb' }
   }
 
   @@character_info = 

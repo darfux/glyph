@@ -50,7 +50,7 @@
             <span class="experiment-cell-progressbar">
               <div class="experiment-cell-progressbar-body">
                 <%# http://demo.doyoe.com/css/inline-block-space/ %>
-                <% for i in 0..2 do %><div class="experiment-cell-progressbar-circle<%= ' active' if i<=e[:progress] %>"><%= i+1 %></div><% end %>
+                <% for i in 0..2 do %><div class="experiment-cell-progressbar-circle<%= ' active' if i<e[:progress] %>"><%= i+1 %></div><% end %>
               </div>
               <div class="experiment-cell-progressbar-step">待实验</div>
               <div class="experiment-cell-progressbar-step">进行中</div>

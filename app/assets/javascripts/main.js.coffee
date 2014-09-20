@@ -68,6 +68,9 @@ handle_ep0_p1 = ->
 	init_nav_point()
 	init_game(0, 1)
 
+handle_ep1_p0 = ->
+	init_nav_point()
+	init_game(1, 0)
 
 root.main_index_js = ->
 	init_list()
