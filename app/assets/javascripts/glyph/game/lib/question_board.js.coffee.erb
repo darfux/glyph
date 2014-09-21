@@ -38,7 +38,7 @@ class ImgShow extends Phaser.Group
 	
 	constructor: (game)->
 		super(game, null, "QuestionBoard-ImgShow")
-		@imagelist = shuffle_array(imglist)[0..1]
+		@imagelist = shuffle_array(imglist)
 		console.log @imagelist
 		# @scale.setTo(0.8)
 

@@ -3,10 +3,10 @@ class Key extends Phaser.Group
 	class KeyFactory
 		@ENTER_CODE = -8
 		@BACKSPACE_CODE = -13
-		@ENTER = (game)->
-			new Key(game, @ENTER_CODE, '√')
-		@BACKSPACE = (game)->
-			new Key(game, @BACKSPACE_CODE, '←')
+		@ENTER = (game, size)->
+			new Key(game, @ENTER_CODE, '√', size)
+		@BACKSPACE = (game, size)->
+			new Key(game, @BACKSPACE_CODE, '←', size)
 
 	# public class attributes
 	<% CHARACTER_RES = 'characters_all'%>
@@ -225,12 +225,12 @@ class SoftKeyboard extends Phaser.Group
 				@key_pad.add(key)
 
 		init_function_key = =>
-			backspace = Key.new.BACKSPACE(game)
+			backspace = Key.new.BACKSPACE(game, size)
 			key_pos(backspace, KEY_NUM)
 			backspace.keyDown = (key) =>
 				@inputbar.backspace()
 
-			enter = Key.new.ENTER(game)
+			enter = Key.new.ENTER(game, size)
 			key_pos(enter, KEY_NUM+1)
 			enter.keyDown = (key) =>
 				@handlePost()

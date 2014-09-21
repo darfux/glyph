@@ -5,6 +5,8 @@
 
 class Ep0P1
 
+game = mask = blur = bg = startbtn = null
+
 root.init_ep0_p1 = ->
 	game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-0-1', { preload: preload, create: pre_create })
 	(mask = $('#paragraph-1-section-1').children('.mask')).css('height', $(window).height()) 
@@ -12,7 +14,6 @@ root.init_ep0_p1 = ->
 	startbtn.css('left', $(window).width()/2-startbtn.width()/2)
 
 
-game = mask = blur = bg = startbtn = null
 
 init_result_table = (result)->
 	rate = 0

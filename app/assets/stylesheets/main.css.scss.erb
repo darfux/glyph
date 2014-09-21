@@ -703,11 +703,20 @@ $progressbar-body-width: 160px;
 
 
 #episode-2{
+  height: 1000px;
+  background-image: url("<%= image_path('ep2bg.jpg') %>");
+  background-position: 0 -160px;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  #main-content{
+    width: 1600px;
+    margin: 0 auto;
+  }
   #buble-templates{
     display: none;
   }
   #dilaog-window{
-    width: 500px;
+    width: 480px;
     height: 880px;
     margin-top: 32px;
     margin-left: 50px;
@@ -717,9 +726,10 @@ $progressbar-body-width: 160px;
     overflow-y: scroll;
     background-color: #DDD;
     border-radius: 10px 0 0 10px;
+    display: inline-block;
   }
   .message-line{
-    margin-top: 16px;
+    margin-top: 24px;
   }
   .message-line-right{
     text-align: right;
@@ -809,6 +819,32 @@ $progressbar-body-width: 160px;
       border: 8px solid;
       border-color: $color $color transparent transparent;
     }
+  }
+  #right-content{
+    width: 1000px;
+    display: inline-block;
+    position: absolute;
+    top: 100px;
+  }
+  .glyph-screen{
+    padding: 5px;
+    width: 840px;
+    border: dashed 4px #CCC;
+    margin:  50px auto;
+    -moz-opacity:0.6;
+    opacity: 0.6;
+    &:hover{
+      -moz-opacity:0.95;
+      opacity: 0.95;
+    }
+  }
+  #avatar{
+    width: 480px;
+    height: 480px;
+    background-image: url("<%= image_path('boy_girl.png') %>");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    margin: 0 auto;
   }
 }
 // #character-0{ 

@@ -112,7 +112,8 @@ freezeBaseWorld = ->
 
 resumeBaseWorld = ->
 	freeze = false
-		
+
+counter = 0	
 update = ->
 	if desti
 		facing = direction_judge(player.body.angle)
@@ -133,15 +134,17 @@ update = ->
 				player.animations.play('walk_ne', true)
 			when CompassDirection.NW
 				player.animations.play('walk_nw', true)
-				# ...
-		seed = Math.random()
-		if seed>0.2 && seed<0.233
-			freezeBaseWorld()
-			popQusetionBoard()
-		else if Phaser.Rectangle.containsPoint(player.body, desti)
-			player.body.velocity.setTo(0, 0)
-			player.animations.stop(null, true)
-			desti = null
+		counter+=1
+		if counter >= 200
+			seed = Math.random()
+			if seed>0.2 && seed<0.233
+				freezeBaseWorld()
+				popQusetionBoard()
+				counter = 0
+			else if Phaser.Rectangle.containsPoint(player.body, desti)
+				player.body.velocity.setTo(0, 0)
+				player.animations.stop(null, true)
+				desti = null
 
 direction_judge = (angle)->
 	# if delP.isZero()

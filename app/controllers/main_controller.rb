@@ -4,7 +4,7 @@ class MainController < ApplicationController
       {index: '实验六', name: '普洛普理论验证', progress: 1, path: nil},
       {index: '实验五', name: '拟境实验', progress: 1, path: nil},
       {index: '实验四', name: '明象实验', progress: 1, path: nil},
-      {index: '实验三', name: '辨义实验', progress: 2, path: nil},
+      {index: '实验三', name: '辨义实验', progress: 2, path: nil, path: game_episode_path(2, paragraph: 0)},
       {index: '实验二', name: '审音实验', progress: 3, path: nil, path: game_episode_path(1, paragraph: 0)},
       {index: '实验一', name: '实验工具应用实验', progress: 3, path: game_episode_path(0, paragraph: 0)}
     ]

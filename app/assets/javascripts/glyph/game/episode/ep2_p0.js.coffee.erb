@@ -17,15 +17,28 @@ add_message_line = (ch_ar, direction)->
 		new_line.find('.message-bubble').append(character)
 
 	$('#dilaog-window').append(new_line)
+	$('#dilaog-window').scrollTop($('#dilaog-window').children().last().offset().top) ;
 
 root.init_ep2_p0 = ->
-	add_message_line([1,2,3,4], 'left')
-	add_message_line([1,2,3,4], 'right')
-	add_message_line([1,2,3,4], 'left')
-	add_message_line([1,2,3,4], 'right')
-	# game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-2-0', { preload: preload, create: create })
+	game = new Phaser.Game(820, 320, Phaser.WEBGl, 'glyph-2-0-keyboard', { preload: preload, create: create })
 
 preload = ->
+	SoftKeyboard.preload(game)
 
 create = ->
+	current_state = 'left'
+	skb = new SoftKeyboard(game, 50, 13, true)
+	bmd = game.add.bitmapData(game.width, game.height);
+	bmd.ctx.beginPath()
+	bmd.ctx.rect(0, 0, game.width, game.height)
+	background = new Phaser.Sprite(game, 0, 0, bmd)
+	background.key.fill(0xff, 0xff, 0xff)
+	game.world.add(background)
+	game.world.add(skb)
+	Util.setCenter(skb)
+	skb.x = skb.x+80
+	skb.onPosted.add (ch_ar)->
+		if ch_ar.length
+			add_message_line(ch_ar, current_state)
+			current_state = if current_state=='left' then 'right' else 'left'
 

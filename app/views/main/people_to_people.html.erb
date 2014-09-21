@@ -1,20 +1,27 @@
 <episode num="<%= @episode %>"></episode>
 <paragraph num="<%= @paragraph %>"></paragraph>
 <div id="episode-2">
-  <div id="dilaog-window">
-  </div>
-</div>
-
-<div id="buble-templates">
-  <div class="message-line message-line-left">
-    <div class="bublewrapper">
-      <div class="message-bubble message-bubble-left">
+  <div id="main-content">
+    <div id="dilaog-window">
+    </div>
+    <div id="right-content">
+      <div id="avatar"></div>
+      <div id="glyph-<%= @episode %>-<%= @paragraph %>-keyboard" class = 'glyph-screen '>
       </div>
     </div>
   </div>
-  <div class="message-line message-line-right">
-    <div class="bublewrapper">
-      <div class="message-bubble message-bubble-right">
+
+  <div id="buble-templates">
+    <div class="message-line message-line-left">
+      <div class="bublewrapper">
+        <div class="message-bubble message-bubble-left">
+        </div>
+      </div>
+    </div>
+    <div class="message-line message-line-right">
+      <div class="bublewrapper">
+        <div class="message-bubble message-bubble-right">
+        </div>
       </div>
     </div>
   </div>
