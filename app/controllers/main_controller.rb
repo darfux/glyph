@@ -12,7 +12,8 @@ class MainController < ApplicationController
 
   @@episode_pages = {
     '0' => { '0' => 'character_recite', '1' => 'character_preview' },
-    '1' => { '0' => 'recognize_item' }
+    '1' => { '0' => 'recognize_item' },
+    '2' => { '0' => 'people_to_people'}
   }
 
   @@character_info = 

@@ -7,8 +7,23 @@ class Ep2P0
 
 game = mask = blur = bg = startbtn = null
 
+add_message_line = (ch_ar, direction)->
+	org_line = $($('#buble-templates').children(".message-line-#{direction}"))
+	new_line = org_line.clone()
+
+	for ch in ch_ar
+		character = $('<div class="chwrapper"><div class="character"></div></div>')
+		character.children('div').addClass("character-#{ch}")
+		new_line.find('.message-bubble').append(character)
+
+	$('#dilaog-window').append(new_line)
+
 root.init_ep2_p0 = ->
-	game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-2-0', { preload: preload, create: create })
+	add_message_line([1,2,3,4], 'left')
+	add_message_line([1,2,3,4], 'right')
+	add_message_line([1,2,3,4], 'left')
+	add_message_line([1,2,3,4], 'right')
+	# game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-2-0', { preload: preload, create: create })
 
 preload = ->
 

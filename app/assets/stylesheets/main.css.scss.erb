@@ -429,7 +429,7 @@ $progressbar-body-width: 160px;
 
 .character-key{  
   transform-origin: 0 0;
-  transform:scale(0.5, 0.5);
+  transform: scale(0.5, 0.5);
   -o-transform: 0 0;
   -o-transform:scale(0.5, 0.5);
   -webkit-transform: 0 0;
@@ -437,6 +437,8 @@ $progressbar-body-width: 160px;
   -ms-transform: 0 0;
   -ms-transform:scale(0.5, 0.5);
   border: solid 1px #233333;
+  display: inline-block;
+  position: absolute;
   &:hover{
     background-color: #EEE;
     cursor: pointer;
@@ -453,8 +455,6 @@ $progressbar-body-width: 160px;
     background-position: -1*($i%10)*160px -1*floor($i/10)*160px;
   }
   .character-key.character-#{$i}{
-    display: inline-block;
-    position: absolute;
     left: ($i%10)*80+16px;
     top: floor($i/10)*80+16px;
   }
@@ -653,7 +653,7 @@ $progressbar-body-width: 160px;
   }
   #paragraph-0-section-1{
     position: relative;
-    background-color: #456;
+    background-color: black;
     #game-start{
       button{
         font-size: 72px;
@@ -682,7 +682,7 @@ $progressbar-body-width: 160px;
   }
   #paragraph-0-section-2{
     height: 1280px; 
-    background-color: #CC6;
+    background-color: #985;
     text-align: center;
     #pre-result{
       font-size: 48px;
@@ -697,6 +697,117 @@ $progressbar-body-width: 160px;
       font-size: 48px;
       font-weight: 600;
       color: #233;
+    }
+  }
+}
+
+
+#episode-2{
+  #buble-templates{
+    display: none;
+  }
+  #dilaog-window{
+    width: 500px;
+    height: 880px;
+    margin-top: 32px;
+    margin-left: 50px;
+    border: solid 1px #BBB;
+    padding: 32px;
+    position: relative;
+    overflow-y: scroll;
+    background-color: #DDD;
+    border-radius: 10px 0 0 10px;
+  }
+  .message-line{
+    margin-top: 16px;
+  }
+  .message-line-right{
+    text-align: right;
+  }
+  .message-line-left{
+    text-align: left;
+  }
+  .bublewrapper{
+    max-width: 360px;
+    display: inline-block;
+    position: relative;
+  }
+  .message-bubble{
+    max-width: 360px;
+    border-radius: 8px;
+    display: inline-block;
+    .character{
+      $scale: 0.25;
+      transform-origin: 0 0;
+      transform:scale($scale, $scale);
+      -o-transform: 0 0;
+      -o-transform:scale($scale, $scale);
+      -webkit-transform: 0 0;
+      -webkit-transform:scale($scale, $scale);
+      -ms-transform: 0 0;
+      -ms-transform:scale($scale, $scale);
+    }
+    .chwrapper{
+      width: 40px;
+      height: 40px;
+      display: inline-block;
+    }
+  }
+  $shadow-color: #888;
+  $tr-color: lighten($shadow-color, 15%);
+  @mixin bubble-shadow($direction) {
+    box-shadow: $direction 1px 4px $shadow-color;
+  }
+
+  .message-bubble-right{
+    $color: #ADA;
+    background-color: $color;
+    text-align: left;
+    @include bubble-shadow(1px);
+    &:before{
+      content: ' ';
+      position: absolute;
+      width: 0;
+      height: 0;
+      right: -13px;
+      top: 8px;
+      border: 6px solid;
+      border-color: $tr-color transparent transparent $tr-color;
+    }
+    &:after{
+      content: ' ';
+      position: absolute;
+      width: 0;
+      height: 0;
+      right: -10px;
+      top: 8px;
+      border: 5px solid;
+      border-color: $color transparent transparent $color;
+    }
+  }
+  .message-bubble-left{
+    $color: #EEE;
+    background-color: $color;
+    @include bubble-shadow(-1px);
+    &:before{
+      content: ' ';
+      position: absolute;
+      width: 0;
+      height: 0;
+      left: -13px;
+      top: 8px;
+      border: 6px solid;
+      border-color: $tr-color $tr-color transparent transparent;
+    }
+    &:after{
+      content: ' ';
+      position: absolute;
+      width: 0;
+      height: 0;
+      left: -10px;
+      top: 8px;
+      border: 8px solid;
+      border-color: $color $color transparent transparent;
     }
   }
 }
