@@ -75,13 +75,19 @@ handle_ep1_p0 = ->
 handle_ep2_p0 = ->
 	init_game(2, 0)
 
+handle_eptest = ->
+	init_eptest()
+
 root.main_index_js = ->
 	init_list()
 
 root.main_episode_js = ->
 	ep = $('episode').attr('num')
 	paragraph = $('paragraph').attr('num')
-	eval("handle_ep#{ep}_p#{paragraph}()")
+	if paragraph
+		eval("handle_ep#{ep}_p#{paragraph}()")
+	else
+		eval("handle_ep#{ep}()")
 
 
 

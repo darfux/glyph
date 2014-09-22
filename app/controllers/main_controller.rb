@@ -9,8 +9,9 @@ class MainController < ApplicationController
 
   @@episode_pages = {
     '0' => { '0' => 'character_recite', '1' => 'character_preview' },
-    '1' => { '0' => 'recognize_item' },
-    '2' => { '0' => 'people_to_people'}
+    '1' => { '0' => 'recognize_item', 'new_character' => 'new_character' },
+    '2' => { '0' => 'people_to_people'},
+    'test' => { nil => 'eptest'}
   }
 
   @@character_info = 
