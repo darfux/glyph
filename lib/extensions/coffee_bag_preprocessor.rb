@@ -61,7 +61,7 @@ module CoffeeBag
         Dir.foreach('.') do |f|
           next if File.directory?(f)
           next if f==current_file_name
-          internal_klasses.push f.split('.')[0].classify
+          internal_klasses.push f.split('.')[0].camelize
         end
         return "" if internal_klasses.empty?
         statements = "\n"+internal_klasses.join(' = ')+" = null\n"
@@ -80,7 +80,7 @@ module CoffeeBag
       def bag_statement
         bag_path = file.split(app_asset_path)[1].split('.')[0]
         tmp = bag_path.split('/')
-        klass = tmp.last.classify
+        klass = tmp.last.camelize
         bag = tmp[0..-2].join('.') + ".#{klass}"
         "\nbag '#{bag}', #{klass}\n" #add a '\n' at head to avoid concat with oringinal file
       end
