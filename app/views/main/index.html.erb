@@ -2,7 +2,7 @@
 <!-- <div id="phaser-example">
 </div> -->
 <div id="main-logo"><img src="<%= image_path('main/logo.png') %>"></div>
-<div id="main-title"><img src="<%= image_path('main/title.png') %>"></div>
+<div id="main-title"><img src="<%= image_path('login/login-title.png') %>"></div>
 <div id="main-header"></div>
 <div id="main-header-decor"><img src="<%= image_path('main/header-decor.png') %>"></div>
 <div id="main-background"></div>
@@ -46,7 +46,7 @@
           
           <div class="experiment-cell-title"><%= link_to e[:index] , e[:path], target: '_blank' %></div>
           <div class="experiment-cell-detail">
-            <span class="experiment-cell-detail-name"><%= e[:name] %></span>
+            <div class="experiment-cell-detail-name"><%= e[:name].html_safe %></div>
             <span class="experiment-cell-progressbar">
               <div class="experiment-cell-progressbar-body">
                 <%# http://demo.doyoe.com/css/inline-block-space/ %>
