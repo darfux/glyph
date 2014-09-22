@@ -1,6 +1,9 @@
 #-import glyph.game.lib.SoftKeyboard
+#-import glyph.game.lib.CharacterCanvas
 
 class Eptest
+
+
 
 game = null
 preload = ->
@@ -11,83 +14,10 @@ preload = ->
 
 # http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app
 create = ->
-	BACKGROUND_COLOR = '#FFF'
-
-	PAINT_CANVAS = { width: 400, height: 400}
-
-	bmd = game.add.bitmapData(PAINT_CANVAS.width, PAINT_CANVAS.height)
-	bmd.ctx.beginPath()
-	bmd.ctx.rect(0, 0, PAINT_CANVAS.width, PAINT_CANVAS.height)
-	bmd.ctx.fillStyle = BACKGROUND_COLOR;
-	bmd.ctx.fill()
-
-	background = game.add.sprite(0, 0, bmd)
-
-	context = bmd.ctx
-	paint = null
-	clickX = []
-	clickY = []
-	clickDrag = []
-	canvas = $(bmd.canvas)
-
-	addClick = (x, y, dragging)->
-		clickX.push(x);
-		clickY.push(y);
-		clickDrag.push(dragging);
-
-	redraw = ->
-		context.clearRect(0, 0, PAINT_CANVAS.width, PAINT_CANVAS.height)
-		bmd.ctx.beginPath()
-		bmd.ctx.rect(0, 0, PAINT_CANVAS.width, PAINT_CANVAS.height)
-		bmd.ctx.fillStyle = BACKGROUND_COLOR;
-		bmd.ctx.fill()
-		context.strokeStyle = "#000"
-		context.lineJoin = "round"
-		context.lineWidth = 12
-				
-		for i in [0..clickX.length]
-			context.beginPath()
-			if clickDrag[i] && i
-				context.moveTo(clickX[i-1], clickY[i-1])
-			else
-				context.moveTo(clickX[i]-1, clickY[i])
-			context.lineTo(clickX[i], clickY[i])
-			context.closePath()
-			context.stroke()
-
-	mousedown = (sp, e)->
-		mouseX = e.pageX - this.offsetLeft
-		mouseY = e.pageY - this.offsetTop
-
-		paint = true
-		addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop)
-		redraw()
-
-	mousemove = (e)->
-		# console.log e
-		if paint
-			addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true)
-			redraw()
-
-	mouseup = ->
-		paint = false
-
-
-	mouseleave = (sp, e)->
-		paint = false
-
-	background.inputEnabled = true
-	e = background.events
-	game.input.addMoveCallback(mousemove, canvas[0])
-	# e.onInputOver.add(mousemove, canvas[0])
-	e.onInputOut.add(mouseleave, canvas[0])
-	e.onInputDown.add(mousedown, canvas[0])
-	e.onInputUp.add(mouseup, canvas[0])
-
-
-	@character =new Phaser.Sprite(game, 0, 0, 'characters_all', 1)
-	@character.height = @character.width = 400
-	game.world.add(@character)
+	cc = new CharacterCanvas(game)
+	game.world.add(cc)
+	cc.show_character(23)
+	cc.enable()
 
 # @desti = null
 update = ->

@@ -37,6 +37,7 @@ create = ->
 	game.world.add(skb)
 	Util.setCenter(skb)
 	skb.x = skb.x+80
+	skb.enable()
 	skb.onPosted.add (ch_ar)->
 		if ch_ar.length
 			add_message_line(ch_ar, current_state)

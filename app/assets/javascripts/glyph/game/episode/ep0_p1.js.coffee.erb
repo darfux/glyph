@@ -76,6 +76,7 @@ create = ->
 	cib.setCode(ar.shift())
 
 	skb = new SoftKeyboard(game, 75)
+	skb.enable()
 	game.world.add(skb)
 	Util.setXCenter(skb)
 	skb.onInputed.add((key)->

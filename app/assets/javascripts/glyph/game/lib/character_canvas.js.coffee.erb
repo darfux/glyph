@@ -1,0 +1,125 @@
+class CharacterCanvas extends Phaser.Group
+	BACKGROUND_COLOR = '#FFF'
+	SIZE = 250
+	PAINT_CANVAS = { width: 450, height: 250}
+
+	constructor: (game)->
+		super(game, null, "SoftKeyboard-Key")
+
+		@context = null
+		@paint = null
+		@canvas = null
+		@clickX = []
+		@clickY = []
+		@color = []
+		@clickDrag = []
+		@background = null
+		@brush_color = '#000'
+
+		init_background = =>
+			bmd = game.add.bitmapData(PAINT_CANVAS.width, PAINT_CANVAS.height)
+			context = bmd.ctx
+			context.beginPath()
+			context.rect(0, 0, PAINT_CANVAS.width, PAINT_CANVAS.height)
+			context.fillStyle = BACKGROUND_COLOR;
+			context.fill()
+			@background = background = new Phaser.Sprite(game, 0, 0, bmd)
+			@add(background)
+
+		init_canvas = =>
+			bmd = game.add.bitmapData(PAINT_CANVAS.width, PAINT_CANVAS.height)
+			@context = context = bmd.ctx
+			@canvas = canvas = $(bmd.canvas)[0]
+			context.beginPath()
+			context.rect(0, 0, PAINT_CANVAS.width, PAINT_CANVAS.height)
+			context.fillStyle = "rgba(0,0,0,0)"
+			context.fill()
+			@character_canvas = new Phaser.Sprite(game, 0, 0, bmd)
+			@add(@character_canvas)
+
+		init_background()
+		init_canvas()
+
+	show_character: (keycode) ->
+		@removeBetween(1, @children.length-2, true)
+		character = new Phaser.Sprite(@game, 0, 0, 'characters_all', keycode)
+		character.height = character.width = SIZE
+		@add(character)
+		@moveDown(character)
+		Util.setXCenter(character)
+
+	change_brush_color: (color) ->
+		@brush_color = color
+
+	enable: ->
+		background = @background
+		background.inputEnabled = true
+		background.input.useHandCursor = true
+		e = background.events
+		@mousemove.callback_index = @game.input.addMoveCallback(@mousemove)
+		e.onInputOut.add(@mouseleave)
+		e.onInputDown.add(@mousedown)
+		e.onInputUp.add(@mouseup)
+
+	disable: ->
+		@background.inputEnabled = false
+		@game.input.deleteMoveCallback(@mousemove.callback_index)
+
+
+	addClick: (x, y, dragging)->
+		@clickX.push(x);
+		@clickY.push(y);
+		@color.push(@brush_color);
+		@clickDrag.push(dragging);
+
+	redraw: ->
+		context = @context
+		clickDrag = @clickDrag
+		clickX = @clickX
+		clickY = @clickY
+		context.clearRect(0, 0, PAINT_CANVAS.width, PAINT_CANVAS.height)
+		context.beginPath()
+		context.rect(0, 0, PAINT_CANVAS.width, PAINT_CANVAS.height)
+		context.fillStyle = "rgba(0,0,0,0)"
+		context.fill()
+		context.closePath()
+		context.lineJoin = "round"
+		context.lineWidth = 8
+				
+		for i in [0..clickX.length]
+			context.beginPath()
+			if clickDrag[i] && i
+				context.moveTo(clickX[i-1], clickY[i-1])
+			else
+				context.moveTo(clickX[i]-1, clickY[i])
+			context.lineTo(clickX[i], clickY[i])
+			context.closePath()
+			context.strokeStyle = @color[i]
+			context.stroke()
+
+	mousedown: (sp, e)=>
+		mouseX = e.x - @x
+		mouseY = e.y - @y
+
+		@paint = true
+		@addClick(mouseX, mouseY)
+		@redraw()
+
+	mousemove: (e)=>
+		if @paint
+			@addClick(e.x - @x, e.y - @.y, true)
+			@redraw()
+
+	mouseup: =>
+		@paint = false
+
+	mouseleave: (sp, e)=>
+		@paint = false
+
+	clean: ->
+		@clickX = []
+		@clickY = []
+		@color = []
+		@clickDrag = []
+		@redraw()
+		@removeBetween(1, @children.length-2, true)

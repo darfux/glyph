@@ -102,7 +102,7 @@ class Key extends Phaser.Group
 	downHandler: =>
 		if @state == States.OVER
 			@background.fillColor(Colors.DOWN)
-			console.log(@keycode)
+			console.log("Key:" + @keycode)
 		if @keyDown
 			@keyDown(this)
 
@@ -122,6 +122,7 @@ class InputBar extends Phaser.Group
 		@keysize = keyboard.keysize
 		@row_size = keyboard.row_size
 		@_character_textures = {}
+		@disabled = false
 
 		init_background = =>
 			bmd = game.add.bitmapData(@row_size*@keysize, @keysize)
@@ -259,7 +260,7 @@ class SoftKeyboard extends Phaser.Group
 		init_layout()
 
 	handleInput: (key)->
-		if @inputbar
+		if @inputbar&&!@inputbar.disabled
 			@inputbar.addCh(key)
 		else
 			@onInputed.dispatch(key)
@@ -283,3 +284,12 @@ class SoftKeyboard extends Phaser.Group
 		@key_pad.forEach((key)->
 			key.enable_input()
 		)
+
+	disableInputBar: ->
+		@removeChild(@inputbar)
+		@inputbar.removeAll()
+		@inputbar.disabled = true
+
+	enableInputBar: ->
+		@addChild(@inputbar)
+		@inputbar.disabled = false
