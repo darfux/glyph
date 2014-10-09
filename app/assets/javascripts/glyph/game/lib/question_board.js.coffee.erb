@@ -55,6 +55,7 @@ class ImgShow extends Phaser.Group
 
 class QuestionBoard extends Phaser.Group
 
+	rest_counter = 4
 	@preload: (game)->
 		SoftKeyboard.preload(game)
 		ImgShow.preload(game)
@@ -132,6 +133,8 @@ class QuestionBoard extends Phaser.Group
 		@removeChild(@cc)
 		@cc.clean()
 		@kbs.enableInputBar()
+		rest_counter-=1
 
 	empty: =>
-		@img.imagelist.length==0
+		# @img.imagelist.length==0
+		rest_counter == 0
