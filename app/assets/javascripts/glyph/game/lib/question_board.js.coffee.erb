@@ -40,7 +40,9 @@ class ImgShow extends Phaser.Group
 	
 	constructor: (game)->
 		super(game, null, "QuestionBoard-ImgShow")
-		@imagelist = shuffle_array(imglist)
+		test_param = $.query.get('test')
+		num = test_param || @imglist.length
+		@imagelist = shuffle_array(imglist)[0..num]
 		console.log @imagelist
 		# @scale.setTo(0.8)
 
@@ -55,7 +57,6 @@ class ImgShow extends Phaser.Group
 
 class QuestionBoard extends Phaser.Group
 
-	rest_counter = 4
 	@preload: (game)->
 		SoftKeyboard.preload(game)
 		ImgShow.preload(game)
@@ -130,11 +131,10 @@ class QuestionBoard extends Phaser.Group
 		@onComplete.dispatch(post_ar)
 		@cc_brush.hide()
 		@cc_eraser.hide()
-		@removeChild(@cc)
+		if @getIndex(@cc) != -1
+			@removeChild(@cc)
 		@cc.clean()
 		@kbs.enableInputBar()
-		rest_counter-=1
 
 	empty: =>
-		# @img.imagelist.length==0
-		rest_counter == 0
+		@img.imagelist.length==0

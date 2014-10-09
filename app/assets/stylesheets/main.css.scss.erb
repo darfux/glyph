@@ -647,8 +647,10 @@ $progressbar-body-width: 160px;
       font-size: 64px;
     }
     .description{
-      margin-top: 120px;
+      margin: 120px auto;
       font-size: 32px;
+      width: 720px;
+      text-align: left;
     }
     margin: 0;
     width: 100%;
@@ -707,6 +709,9 @@ $progressbar-body-width: 160px;
     }
     #result-show{
       display: none;
+      a{
+        text-decoration: none;
+      }
     }
     .description{
       padding-top: 60px;
@@ -717,8 +722,30 @@ $progressbar-body-width: 160px;
   }
 }
 
-
+#episode-2-pre{
+  margin: 0;
+  width: 100%;
+  height: 1280px;
+  background-color: #D96;
+  color: white;
+  text-align: center;
+  h1{
+    margin-top: 0;
+    padding-top: 160px;
+    font-size: 64px;
+  }
+  .description{
+    text-align: left;
+    width: 640px;
+    margin: 120px auto auto;
+    font-size: 32px;
+  }
+  #episode-start{
+    font-size: 32px;
+  }
+}
 #episode-2{
+  display: none;
   height: 1000px;
   background-image: url("<%= image_path('ep2bg.jpg') %>");
   background-position: 0 -160px;
@@ -861,6 +888,9 @@ $progressbar-body-width: 160px;
     background-repeat: no-repeat;
     background-size: 100%;
     margin: 0 auto;
+  }
+  #return-to-main{
+    text-align: center;
   }
 }
 // #character-0{ 

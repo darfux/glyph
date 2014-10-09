@@ -1,5 +1,14 @@
 <episode num="<%= @episode %>"></episode>
 <paragraph num="<%= @paragraph %>"></paragraph>
+<div id="episode-2-pre">
+  <h1>情景对话</h1>
+  <div class="description">
+    1）两人分组，通过一问一答的方式，指明已有事物或新命名事物的数量、时空坐标、颜色、形态；体会数词、颜色词、方位词、时间词、形容词、疑问词等抽象概念的形成过程 <br>
+    2）正式开始游戏之前，同组的学生需要相互熟悉、统一规则<br>
+    3）各组全部完成后，对比各组创造的新概念，总结规律
+  </div>
+  <button id='episode-start'>开始</button>
+</div>
 <div id="episode-2">
   <div id="main-content">
     <div id="dilaog-window">
@@ -24,5 +33,10 @@
         </div>
       </div>
     </div>
+  </div>
+  <div id='return-to-main'>
+    <%= link_to game_path do  %>
+    <button>返回实验列表</button>
+    <% end %>
   </div>
 </div>

@@ -1,8 +1,9 @@
 class MainController < ApplicationController
   def index
+    @current_user = User.find(session[:user_id]) if session[:user_id]
     @experiments = [
       {index: '实验一', name: '看图识字', progress: 3, path: game_episode_path(0, paragraph: 0)},
-      {index: '实验二', name: "<small>识别新事物 创造新词汇</small>", progress: 3, path: nil, path: game_episode_path(1, paragraph: 0)},
+      {index: '实验二', name: "<small>识别新事物 创造新词汇</small>", progress: 3, path: nil, path: game_episode_path(1, paragraph: 0, test: 4)},
       {index: '实验三', name: '情景对话', progress: 2, path: nil, path: game_episode_path(2, paragraph: 0)}
     ]
   end

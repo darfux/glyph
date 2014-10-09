@@ -20,6 +20,9 @@ add_message_line = (ch_ar, direction)->
 	$('#dilaog-window').scrollTop($('#dilaog-window').children().last().offset().top) ;
 
 root.init_ep2_p0 = ->
+	$('#episode-start').click ->
+		$('#episode-2-pre').hide()
+		$('#episode-2').show()
 	game = new Phaser.Game(820, 320, Phaser.WEBGl, 'glyph-2-0-keyboard', { preload: preload, create: create })
 
 preload = ->

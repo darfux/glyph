@@ -34,7 +34,12 @@
     <div id="main-nav">
       <div id="nav-mark"></div>
       <div id="nav-title">实验项目</div>
-      <div id="nav-logout">注销</div>
+      <div id="nav-logout">
+        <% if @current_user %>
+        <%= @current_user.name %>|<%= @current_user.major %>|
+        <% end %>
+        <%= link_to '注销', root_path %>
+      </div>
     </div>
 
     <div id="experiment-container">

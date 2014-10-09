@@ -72,7 +72,7 @@ create = ->
 	for i in [0..ch_num]
 		result[i] = 0
 
-	ar = shuffle_array([0..ch_num])
+	ar = shuffle_array([0..58])[0..ch_num]
 	cib.setCode(ar.shift())
 
 	skb = new SoftKeyboard(game, 75)
