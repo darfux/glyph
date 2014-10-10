@@ -5,7 +5,7 @@
 
 class Ep0P1
 
-game = mask = blur = bg = startbtn = null
+game = mask = blur = bg = startbtn = test_num = null
 
 root.init_ep0_p1 = ->
 	game = new Phaser.Game($(window).width(), $(window).height(), Phaser.WEBGl, 'glyph-0-1', { preload: preload, create: pre_create })
@@ -14,15 +14,15 @@ root.init_ep0_p1 = ->
 	startbtn.css('left', $(window).width()/2-startbtn.width()/2)
 
 
-
 init_result_table = (result)->
 	rate = 0
 	for k,v of result
 		if v == 0
 			rate += 1
+			$("#result-#{k}").html("<span>0</span>")
 			continue
 		$("#result-#{k}").html("<span class='wrong'>#{v}</span>")
-	rate = rate/result.length
+	rate = rate/test_num
 	$('#result-rate').html("#{rate*100}%")
 	$('#pre-result').hide()
 	$('#result-show').show()
@@ -65,14 +65,16 @@ create = ->
 	init_background()
 	init_infoshow()
 
+	CH_NUM = 58
 	test_param = $.query.get('test')
-	ch_num = test_param || 58
+	test_num = test_param+1 || CH_NUM
 
-	result = new Array(ch_num)
-	for i in [0..ch_num]
+	result = new Array(CH_NUM)
+
+	ar = shuffle_array([0..58])[0...test_num]
+	for i in ar
 		result[i] = 0
-
-	ar = shuffle_array([0..58])[0..ch_num]
+		
 	cib.setCode(ar.shift())
 
 	skb = new SoftKeyboard(game, 75)
@@ -114,12 +116,13 @@ create = ->
 					game.world.filters = blur
 					mask.show()
 					init_result_table(result)
+					# game.destroy()
 				)
 				timer.add(2000, ->
 					$('#nav-point').children()[2].click()
 				)
 				timer.onComplete.add(->
-					# game.destroy()
+					game.destroy()
 				)
 				timer.start()
 	)

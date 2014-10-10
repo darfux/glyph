@@ -27,9 +27,6 @@
     </div>
     <div id="result-show">
       <div class='description'>
-      <%= link_to '返回', game_path %>
-      </div>
-<!--       <div class='description'>
         考查结果
       </div>
       <div>
@@ -40,8 +37,8 @@
         <% for i in 0..5 do %>
           <table>
             <tr>
-              <% for j in 0..10 do%>
-                <% if i==5&&j==10 %>
+              <% for j in 0..9 do%>
+                <% if i==5&&j==9 %>
                 <th>---</th>
                 <% else %>
                 <th><%= (j+i*10).to_s.rjust(2, '0') %></th>
@@ -49,18 +46,20 @@
               <% end %>
             </tr>
             <tr>
-              <% for j in 0..10 do%>
-                <% if i==5&&j==10 %>
+              <% for j in 0..9 do%>
+                <% if i==5&&j==9 %>
                 <th>---</th>
                 <% else %>
-                <td id="result-<%= j+i*10 %>">0</td>
+                <td id="result-<%= j+i*10 %>">X</td>
                 <% end %>
               <% end %>
             </tr>
           </table>
         <% end %>
-      </div> -->
+      </div>
+      <div class='description'>
+        <%= link_to '返回', game_path %>
+      </div>
     </div>
-
   </div>
 </div>
